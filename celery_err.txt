@@ -1,0 +1,450 @@
+celery_worker-1  | Traceback (most recent call last):
+celery_worker-1  |   File "/usr/local/bin/celery", line 8, in <module>
+celery_worker-1  |     sys.exit(main())
+celery_worker-1  |              ^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
+celery_worker-1  |     sys.exit(_main())
+celery_worker-1  |              ^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 227, in main
+celery_worker-1  |     return celery(auto_envvar_prefix="CELERY")
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1161, in __call__
+celery_worker-1  |     return self.main(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1082, in main
+celery_worker-1  |     rv = self.invoke(ctx)
+celery_worker-1  |          ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1697, in invoke
+celery_worker-1  |     return _process_result(sub_ctx.command.invoke(sub_ctx))
+celery_worker-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1443, in invoke
+celery_worker-1  |     return ctx.invoke(self.callback, **ctx.params)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 788, in invoke
+celery_worker-1  |     return __callback(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 33, in new_func
+celery_worker-1  |     return f(get_current_context(), *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 135, in caller
+celery_worker-1  |     return f(ctx, *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 359, in worker
+celery_worker-1  |     worker = app.Worker(
+celery_worker-1  |              ^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 94, in __init__
+celery_worker-1  |     self.app.loader.init_worker()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 110, in init_worker
+celery_worker-1  |     self.import_default_modules()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in import_default_modules
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in <listcomp>
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 85, in import_task_module
+celery_worker-1  |     return self.import_from_cwd(module)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 91, in import_from_cwd
+celery_worker-1  |     return import_from_cwd(
+celery_worker-1  |            ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/utils/imports.py", line 105, in import_from_cwd
+celery_worker-1  |     return imp(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 88, in import_module
+celery_worker-1  |     return importlib.import_module(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+celery_worker-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+celery_worker-1  |   File "/app/app/tasks/story_tasks.py", line 5, in <module>
+celery_worker-1  |     from app.repositories.story_repository import StoryRepository
+celery_worker-1  |   File "/app/app/repositories/story_repository.py", line 8, in <module>
+celery_worker-1  |     from app.models import Story, UserProfile
+celery_worker-1  |   File "/app/app/models.py", line 54, in <module>
+celery_worker-1  |     class UserProfile(Base):
+celery_worker-1  |   File "/app/app/models.py", line 88, in UserProfile
+celery_worker-1  |     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+celery_worker-1  |                                                                 ^^^^
+celery_worker-1  | NameError: name 'func' is not defined
+celery_worker-1  | Traceback (most recent call last):
+celery_worker-1  |   File "/usr/local/bin/celery", line 8, in <module>
+celery_worker-1  |     sys.exit(main())
+celery_worker-1  |              ^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
+celery_worker-1  |     sys.exit(_main())
+celery_worker-1  |              ^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 227, in main
+celery_worker-1  |     return celery(auto_envvar_prefix="CELERY")
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1161, in __call__
+celery_worker-1  |     return self.main(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1082, in main
+celery_worker-1  |     rv = self.invoke(ctx)
+celery_worker-1  |          ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1697, in invoke
+celery_worker-1  |     return _process_result(sub_ctx.command.invoke(sub_ctx))
+celery_worker-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1443, in invoke
+celery_worker-1  |     return ctx.invoke(self.callback, **ctx.params)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 788, in invoke
+celery_worker-1  |     return __callback(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 33, in new_func
+celery_worker-1  |     return f(get_current_context(), *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 135, in caller
+celery_worker-1  |     return f(ctx, *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 359, in worker
+celery_worker-1  |     worker = app.Worker(
+celery_worker-1  |              ^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 94, in __init__
+celery_worker-1  |     self.app.loader.init_worker()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 110, in init_worker
+celery_worker-1  |     self.import_default_modules()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in import_default_modules
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in <listcomp>
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 85, in import_task_module
+celery_worker-1  |     return self.import_from_cwd(module)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 91, in import_from_cwd
+celery_worker-1  |     return import_from_cwd(
+celery_worker-1  |            ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/utils/imports.py", line 105, in import_from_cwd
+celery_worker-1  |     return imp(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 88, in import_module
+celery_worker-1  |     return importlib.import_module(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+celery_worker-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+celery_worker-1  |   File "/app/app/tasks/story_tasks.py", line 5, in <module>
+celery_worker-1  |     from app.repositories.story_repository import StoryRepository
+celery_worker-1  |   File "/app/app/repositories/story_repository.py", line 8, in <module>
+celery_worker-1  |     from app.models import Story, UserProfile
+celery_worker-1  |   File "/app/app/models.py", line 54, in <module>
+celery_worker-1  |     class UserProfile(Base):
+celery_worker-1  |   File "/app/app/models.py", line 88, in UserProfile
+celery_worker-1  |     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+celery_worker-1  |                                                                 ^^^^
+celery_worker-1  | NameError: name 'func' is not defined
+celery_worker-1  | Traceback (most recent call last):
+celery_worker-1  |   File "/usr/local/bin/celery", line 8, in <module>
+celery_worker-1  |     sys.exit(main())
+celery_worker-1  |              ^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
+celery_worker-1  |     sys.exit(_main())
+celery_worker-1  |              ^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 227, in main
+celery_worker-1  |     return celery(auto_envvar_prefix="CELERY")
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1161, in __call__
+celery_worker-1  |     return self.main(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1082, in main
+celery_worker-1  |     rv = self.invoke(ctx)
+celery_worker-1  |          ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1697, in invoke
+celery_worker-1  |     return _process_result(sub_ctx.command.invoke(sub_ctx))
+celery_worker-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1443, in invoke
+celery_worker-1  |     return ctx.invoke(self.callback, **ctx.params)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 788, in invoke
+celery_worker-1  |     return __callback(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 33, in new_func
+celery_worker-1  |     return f(get_current_context(), *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 135, in caller
+celery_worker-1  |     return f(ctx, *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 359, in worker
+celery_worker-1  |     worker = app.Worker(
+celery_worker-1  |              ^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 94, in __init__
+celery_worker-1  |     self.app.loader.init_worker()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 110, in init_worker
+celery_worker-1  |     self.import_default_modules()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in import_default_modules
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in <listcomp>
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 85, in import_task_module
+celery_worker-1  |     return self.import_from_cwd(module)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 91, in import_from_cwd
+celery_worker-1  |     return import_from_cwd(
+celery_worker-1  |            ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/utils/imports.py", line 105, in import_from_cwd
+celery_worker-1  |     return imp(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 88, in import_module
+celery_worker-1  |     return importlib.import_module(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+celery_worker-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+celery_worker-1  |   File "/app/app/tasks/story_tasks.py", line 5, in <module>
+celery_worker-1  |     from app.repositories.story_repository import StoryRepository
+celery_worker-1  |   File "/app/app/repositories/story_repository.py", line 8, in <module>
+celery_worker-1  |     from app.models import Story, UserProfile
+celery_worker-1  |   File "/app/app/models.py", line 54, in <module>
+celery_worker-1  |     class UserProfile(Base):
+celery_worker-1  |   File "/app/app/models.py", line 88, in UserProfile
+celery_worker-1  |     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+celery_worker-1  |                                                                 ^^^^
+celery_worker-1  | NameError: name 'func' is not defined
+celery_worker-1  | Traceback (most recent call last):
+celery_worker-1  |   File "/usr/local/bin/celery", line 8, in <module>
+celery_worker-1  |     sys.exit(main())
+celery_worker-1  |              ^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
+celery_worker-1  |     sys.exit(_main())
+celery_worker-1  |              ^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 227, in main
+celery_worker-1  |     return celery(auto_envvar_prefix="CELERY")
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1161, in __call__
+celery_worker-1  |     return self.main(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1082, in main
+celery_worker-1  |     rv = self.invoke(ctx)
+celery_worker-1  |          ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1697, in invoke
+celery_worker-1  |     return _process_result(sub_ctx.command.invoke(sub_ctx))
+celery_worker-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1443, in invoke
+celery_worker-1  |     return ctx.invoke(self.callback, **ctx.params)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 788, in invoke
+celery_worker-1  |     return __callback(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 33, in new_func
+celery_worker-1  |     return f(get_current_context(), *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 135, in caller
+celery_worker-1  |     return f(ctx, *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 359, in worker
+celery_worker-1  |     worker = app.Worker(
+celery_worker-1  |              ^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 94, in __init__
+celery_worker-1  |     self.app.loader.init_worker()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 110, in init_worker
+celery_worker-1  |     self.import_default_modules()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in import_default_modules
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in <listcomp>
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 85, in import_task_module
+celery_worker-1  |     return self.import_from_cwd(module)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 91, in import_from_cwd
+celery_worker-1  |     return import_from_cwd(
+celery_worker-1  |            ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/utils/imports.py", line 105, in import_from_cwd
+celery_worker-1  |     return imp(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 88, in import_module
+celery_worker-1  |     return importlib.import_module(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+celery_worker-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+celery_worker-1  |   File "/app/app/tasks/story_tasks.py", line 5, in <module>
+celery_worker-1  |     from app.repositories.story_repository import StoryRepository
+celery_worker-1  |   File "/app/app/repositories/story_repository.py", line 8, in <module>
+celery_worker-1  |     from app.models import Story, UserProfile
+celery_worker-1  |   File "/app/app/models.py", line 54, in <module>
+celery_worker-1  |     class UserProfile(Base):
+celery_worker-1  |   File "/app/app/models.py", line 88, in UserProfile
+celery_worker-1  |     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+celery_worker-1  |                                                                 ^^^^
+celery_worker-1  | NameError: name 'func' is not defined
+celery_worker-1  | Traceback (most recent call last):
+celery_worker-1  |   File "/usr/local/bin/celery", line 8, in <module>
+celery_worker-1  |     sys.exit(main())
+celery_worker-1  |              ^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
+celery_worker-1  |     sys.exit(_main())
+celery_worker-1  |              ^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 227, in main
+celery_worker-1  |     return celery(auto_envvar_prefix="CELERY")
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1161, in __call__
+celery_worker-1  |     return self.main(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1082, in main
+celery_worker-1  |     rv = self.invoke(ctx)
+celery_worker-1  |          ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1697, in invoke
+celery_worker-1  |     return _process_result(sub_ctx.command.invoke(sub_ctx))
+celery_worker-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1443, in invoke
+celery_worker-1  |     return ctx.invoke(self.callback, **ctx.params)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 788, in invoke
+celery_worker-1  |     return __callback(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 33, in new_func
+celery_worker-1  |     return f(get_current_context(), *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 135, in caller
+celery_worker-1  |     return f(ctx, *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 359, in worker
+celery_worker-1  |     worker = app.Worker(
+celery_worker-1  |              ^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 94, in __init__
+celery_worker-1  |     self.app.loader.init_worker()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 110, in init_worker
+celery_worker-1  |     self.import_default_modules()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in import_default_modules
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in <listcomp>
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 85, in import_task_module
+celery_worker-1  |     return self.import_from_cwd(module)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 91, in import_from_cwd
+celery_worker-1  |     return import_from_cwd(
+celery_worker-1  |            ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/utils/imports.py", line 105, in import_from_cwd
+celery_worker-1  |     return imp(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 88, in import_module
+celery_worker-1  |     return importlib.import_module(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+celery_worker-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+celery_worker-1  |   File "/app/app/tasks/story_tasks.py", line 5, in <module>
+celery_worker-1  |     from app.repositories.story_repository import StoryRepository
+celery_worker-1  |   File "/app/app/repositories/story_repository.py", line 8, in <module>
+celery_worker-1  |     from app.models import Story, UserProfile
+celery_worker-1  |   File "/app/app/models.py", line 54, in <module>
+celery_worker-1  |     class UserProfile(Base):
+celery_worker-1  |   File "/app/app/models.py", line 88, in UserProfile
+celery_worker-1  |     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+celery_worker-1  |                                                                 ^^^^
+celery_worker-1  | NameError: name 'func' is not defined
+celery_worker-1  | Traceback (most recent call last):
+celery_worker-1  |   File "/usr/local/bin/celery", line 8, in <module>
+celery_worker-1  |     sys.exit(main())
+celery_worker-1  |              ^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/__main__.py", line 15, in main
+celery_worker-1  |     sys.exit(_main())
+celery_worker-1  |              ^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/celery.py", line 227, in main
+celery_worker-1  |     return celery(auto_envvar_prefix="CELERY")
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1161, in __call__
+celery_worker-1  |     return self.main(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1082, in main
+celery_worker-1  |     rv = self.invoke(ctx)
+celery_worker-1  |          ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1697, in invoke
+celery_worker-1  |     return _process_result(sub_ctx.command.invoke(sub_ctx))
+celery_worker-1  |                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 1443, in invoke
+celery_worker-1  |     return ctx.invoke(self.callback, **ctx.params)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/core.py", line 788, in invoke
+celery_worker-1  |     return __callback(*args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/click/decorators.py", line 33, in new_func
+celery_worker-1  |     return f(get_current_context(), *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/base.py", line 135, in caller
+celery_worker-1  |     return f(ctx, *args, **kwargs)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/bin/worker.py", line 359, in worker
+celery_worker-1  |     worker = app.Worker(
+celery_worker-1  |              ^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/worker/worker.py", line 94, in __init__
+celery_worker-1  |     self.app.loader.init_worker()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 110, in init_worker
+celery_worker-1  |     self.import_default_modules()
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in import_default_modules
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 105, in <listcomp>
+celery_worker-1  |     return [self.import_task_module(m) for m in self.default_modules]
+celery_worker-1  |             ^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 85, in import_task_module
+celery_worker-1  |     return self.import_from_cwd(module)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 91, in import_from_cwd
+celery_worker-1  |     return import_from_cwd(
+celery_worker-1  |            ^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/utils/imports.py", line 105, in import_from_cwd
+celery_worker-1  |     return imp(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/site-packages/celery/loaders/base.py", line 88, in import_module
+celery_worker-1  |     return importlib.import_module(module, package=package)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+celery_worker-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+celery_worker-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1204, in _gcd_import
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1176, in _find_and_load
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 1147, in _find_and_load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 690, in _load_unlocked
+celery_worker-1  |   File "<frozen importlib._bootstrap_external>", line 940, in exec_module
+celery_worker-1  |   File "<frozen importlib._bootstrap>", line 241, in _call_with_frames_removed
+celery_worker-1  |   File "/app/app/tasks/story_tasks.py", line 5, in <module>
+celery_worker-1  |     from app.repositories.story_repository import StoryRepository
+celery_worker-1  |   File "/app/app/repositories/story_repository.py", line 8, in <module>
+celery_worker-1  |     from app.models import Story, UserProfile
+celery_worker-1  |   File "/app/app/models.py", line 54, in <module>
+celery_worker-1  |     class UserProfile(Base):
+celery_worker-1  |   File "/app/app/models.py", line 88, in UserProfile
+celery_worker-1  |     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+celery_worker-1  |                                                                 ^^^^
+celery_worker-1  | NameError: name 'func' is not defined

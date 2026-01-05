@@ -1,0 +1,100 @@
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T20:05:48.253667", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:05:48.352565", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:05:48.353007", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T20:05:48.518839", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:05:48.622503", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:05:48.622878", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend-1  | {"timestamp": "2026-01-04T20:06:55.556263", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | [7c0eecdd-7d8c-45c8-b37d-7a310506e363] POST /api/auth/register - 400 (0.288s)
+backend-1  | {"timestamp": "2026-01-04T20:06:55.845300", "level": "INFO", "logger": "root", "message": "Response 400", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:36950 - "POST /api/auth/register HTTP/1.1" 400 Bad Request
+backend-1  | INFO:     Shutting down
+backend-1  | INFO:     Waiting for application shutdown.
+backend-1  | INFO:     Application shutdown complete.
+backend-1  | INFO:     Finished server process [1]
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | INFO:     Started server process [1]
+backend-1  | INFO:     Waiting for application startup.
+backend-1  | DEBUG: SENTRY_DSN='...'
+backend-1  | Warning: Sentry initialization failed: Unsupported scheme ''
+backend-1  | 🔍 Validating environment configuration...
+backend-1  | 
+backend-1  | ⚠️  WARNINGS:
+backend-1  |   - Feature 'storage' disabled due to missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   - Feature 'voice_cloning' disabled due to missing: ELEVENLABS_API_KEY
+backend-1  |   - Feature 'payments' disabled due to missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  |   - Recommended variable not set: ALLOWED_ORIGINS
+backend-1  |   - JWT_SECRET_KEY should be at least 32 characters for security
+backend-1  |   - DEBUG mode is enabled - should be disabled in production!
+backend-1  | 
+backend-1  | 📦 Feature Status:
+backend-1  |   ✅ Story Generation
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T20:07:45.781317", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:07:45.894476", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:07:45.895040", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T20:07:45.996994", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:07:46.112370", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:07:46.112808", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend-1  | {"timestamp": "2026-01-04T20:08:29.332329", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | [1010f466-a27d-4471-88b4-30f7181def3e] POST /api/auth/register - 500 (0.271s)
+backend-1  | {"timestamp": "2026-01-04T20:08:29.604405", "level": "INFO", "logger": "root", "message": "Response 500", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:41332 - "POST /api/auth/register HTTP/1.1" 500 Internal Server Error
+backend-1  | INFO:     Shutting down
+backend-1  | INFO:     Waiting for application shutdown.
+backend-1  | INFO:     Application shutdown complete.
+backend-1  | INFO:     Finished server process [1]
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | INFO:     Started server process [1]
+backend-1  | INFO:     Waiting for application startup.
+backend-1  | DEBUG: SENTRY_DSN='...'
+backend-1  | Warning: Sentry initialization failed: Unsupported scheme ''
+backend-1  | 🔍 Validating environment configuration...
+backend-1  | 
+backend-1  | ⚠️  WARNINGS:
+backend-1  |   - Feature 'storage' disabled due to missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   - Feature 'voice_cloning' disabled due to missing: ELEVENLABS_API_KEY
+backend-1  |   - Feature 'payments' disabled due to missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  |   - Recommended variable not set: ALLOWED_ORIGINS
+backend-1  |   - JWT_SECRET_KEY should be at least 32 characters for security
+backend-1  |   - DEBUG mode is enabled - should be disabled in production!
+backend-1  | 
+backend-1  | 📦 Feature Status:
+backend-1  |   ✅ Story Generation
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T20:09:41.104379", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:09:41.203556", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:09:41.204028", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T20:09:41.304654", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:09:41.400770", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T20:09:41.401161", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)

@@ -1,0 +1,132 @@
+{
+  "templates": [
+    {
+      "id": "fantasy_adventure",
+      "title": "Fantastik Macera",
+      "category": "macera",
+      "description": "Büyülü dünyalarda macera dolu bir yolculuk",
+      "theme": "Büyülü bir ormanda kaybolan bir gezgin",
+      "story_type": "fantastik",
+      "image_style": "fantasy",
+      "example": "Bir zamanlar, büyülü bir ormanda kaybolan cesur bir gezgin vardı..."
+    },
+    {
+      "id": "space_explorer",
+      "title": "Uzay Kaşifi",
+      "category": "bilimkurgu",
+      "description": "Uzayın derinliklerinde keşif",
+      "theme": "Uzayda yalnız bir gezgin, yeni bir gezegen keşfediyor",
+      "story_type": "bilimkurgu",
+      "image_style": "realistic",
+      "example": "Uzay gemisinin penceresinden bakan kaptan, bilinmeyen bir gezegen görüyordu..."
+    },
+    {
+      "id": "haunted_house",
+      "title": "Perili Ev",
+      "category": "korku",
+      "description": "Gizemli ve ürkütücü bir hikâye",
+      "theme": "Terk edilmiş bir evde gece geçiren bir grup arkadaş",
+      "story_type": "korku",
+      "image_style": "realistic",
+      "example": "Gece yarısı, terk edilmiş evin kapısı yavaşça açıldı..."
+    },
+    {
+      "id": "love_story",
+      "title": "Aşk Hikâyesi",
+      "category": "romantik",
+      "description": "Duygusal ve romantik bir hikâye",
+      "theme": "İki yabancı, bir kafede karşılaşıyor",
+      "story_type": "romantik",
+      "image_style": "watercolor",
+      "example": "Yağmurlu bir öğleden sonra, küçük bir kafede gözleri buluştu..."
+    },
+    {
+      "id": "funny_misunderstanding",
+      "title": "Komik Yanlış Anlama",
+      "category": "komedi",
+      "description": "Eğlenceli ve komik bir hikâye",
+      "theme": "Bir restoranda yanlış sipariş veren bir müşteri",
+      "story_type": "komedi",
+      "image_style": "cartoon",
+      "example": "Garson, müşterinin siparişini yanlış anladı ve masaya dev bir pizza getirdi..."
+    },
+    {
+      "id": "dramatic_choice",
+      "title": "Zor Seçim",
+      "category": "dram",
+      "description": "Duygusal ve derin bir hikâye",
+      "theme": "Hayatını değiştirecek bir karar vermek zorunda olan bir kişi",
+      "story_type": "dram",
+      "image_style": "oil_painting",
+      "example": "Masanın üzerindeki mektup, hayatını sonsuza kadar değiştirecek bir seçim sunuyordu..."
+    },
+    {
+      "id": "fairy_tale_prince",
+      "title": "Masal Prensi",
+      "category": "masal",
+      "description": "Klasik masal tarzında bir hikâye",
+      "theme": "Kayıp prensesi arayan cesur bir prens",
+      "story_type": "masal",
+      "image_style": "fantasy",
+      "example": "Bir zamanlar, uzak bir krallıkta kayıp prensesi arayan cesur bir prens vardı..."
+    },
+    {
+      "id": "treasure_hunt",
+      "title": "Hazine Avı",
+      "category": "macera",
+      "description": "Heyecanlı bir hazine avı macerası",
+      "theme": "Eski bir haritayı takip eden bir grup maceracı",
+      "story_type": "macera",
+      "image_style": "digital_art",
+      "example": "Eski haritanın üzerindeki işaretler, gizli bir hazineye götürüyordu..."
+    }
+  ],
+  "categories": [
+    {
+      "id": "all",
+      "name": "Tümü",
+      "icon": "view-grid"
+    },
+    {
+      "id": "masal",
+      "name": "Masal",
+      "icon": "book-open-variant"
+    },
+    {
+      "id": "bilimkurgu",
+      "name": "Bilimkurgu",
+      "icon": "rocket-launch"
+    },
+    {
+      "id": "korku",
+      "name": "Korku",
+      "icon": "ghost"
+    },
+    {
+      "id": "macera",
+      "name": "Macera",
+      "icon": "sword-cross"
+    },
+    {
+      "id": "romantik",
+      "name": "Romantik",
+      "icon": "heart"
+    },
+    {
+      "id": "komedi",
+      "name": "Komedi",
+      "icon": "emoticon-happy"
+    },
+    {
+      "id": "dram",
+      "name": "Dram",
+      "icon": "drama-masks"
+    },
+    {
+      "id": "fantastik",
+      "name": "Fantastik",
+      "icon": "magic-staff"
+    }
+  ]
+}
+

@@ -1,0 +1,31 @@
+🔍 Checking Story Services Instantiation...
+👉 Checking StoryService (app.services.story_service)... ✅ OK
+👉 Checking ImageService (app.services.image_service)... ✅ OK
+👉 Checking TTSService (app.services.tts_service)... ✅ OK
+👉 Checking StoryStorage (app.services.story_storage)... ✅ OK
+👉 Checking StoryEditor (app.services.story_editor)... ✅ OK
+👉 Checking MultiImageService (app.services.multi_image_service)... ✅ OK
+👉 Checking StatisticsService (app.services.statistics_service)... ✅ OK
+👉 Checking TemplateService (app.services.template_service)... ✅ OK
+👉 Checking CollectionService (app.services.collection_service)... ✅ OK
+👉 Checking ExportService (app.services.export_service)... ✅ OK
+👉 Checking InteractiveStoryService (app.services.interactive_story_service)... ✅ OK
+👉 Checking TranslationService (app.services.translation_service)... ✅ OK
+👉 Checking UserProfileService (app.services.user_profile_service)... ✅ OK
+👉 Checking DialogueService (app.services.dialogue_service)... ✅ OK
+👉 Checking CharacterService (app.services.character_service)... ✅ OK
+👉 Checking StoryOutlineService (app.services.story_outline_service)... ✅ OK
+👉 Checking CommentService (app.services.comment_service)... ✅ OK
+👉 Checking LikeService (app.services.like_service)... ✅ OK
+👉 Checking CollaborationService (app.services.collaboration_service)... ✅ OK
+👉 Checking VoiceActingService (app.services.voice_acting_service)... ✅ OK
+👉 Checking SoundEffectService (app.services.sound_effect_service)... ✅ OK
+👉 Checking StoryVersioningService (app.services.story_versioning_service)... ✅ OK
+👉 Checking StoryAnalysisService (app.services.story_analysis_service)... ✅ OK
+👉 Checking RecommendationService (app.services.recommendation_service)... ✅ OK
+👉 Checking MusicService (app.services.music_service)... ✅ OK
+👉 Checking StoryComparisonService (app.services.story_comparison_service)... ✅ OK
+👉 Checking CommunityService (app.services.community_service)... ✅ OK
+👉 Checking SearchService (app.services.search_service)... ❌ FAILED
+
+CRITICAL ERROR in SearchService:

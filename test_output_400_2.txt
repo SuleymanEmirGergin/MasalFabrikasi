@@ -1,0 +1,4 @@
+🚀 Masal Fabrikası Backend Test Başlıyor...
+👤 Kullanıcı oluşturuluyor: test_2914d7f3@example.com
+❌ Kayıt başarısız: 400
+📄 Response Body: {"success":false,"error":{"code":"HTTP_ERROR","message":"Kullanıcı kaydı oluşturulamadı: subject table for an INSERT, UPDATE or DELETE expected, got 'users'.","details":{},"request_id":"3eb4d867-8408-427e-8c40-628f8a86fb34","timestamp":"2026-01-04T20:03:42.026760"}}

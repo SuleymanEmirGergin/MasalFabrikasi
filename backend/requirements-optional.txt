@@ -1,0 +1,9 @@
+# Opsiyonel Paketler
+# Bu paketler kritik değildir ve bağımlılık çakışmaları olabilir
+
+# Çeviri için (googletrans eski ve httpx uyumsuz, OpenAI çeviri kullanılıyor)
+# googletrans==4.0.0rc1  # httpx==0.13.3 gerektirir (Python 3.12 ile uyumsuz)
+
+# Not: translation_service.py zaten googletrans olmadan çalışabilir
+# Diğer çeviri servisleri OpenAI kullanıyor
+

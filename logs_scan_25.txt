@@ -1,0 +1,100 @@
+backend-1  | INFO:     127.0.0.1:60524 - "POST /api/auth/register HTTP/1.1" 500 Internal Server Error
+backend-1  | {"timestamp": "2026-01-04T19:50:47.575934", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | [4f2a2153-9167-456e-a3cc-a6a2381ec511] POST /api/auth/register - 500 (0.001s)
+backend-1  | {"timestamp": "2026-01-04T19:50:47.578099", "level": "INFO", "logger": "root", "message": "Response 500", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:43204 - "POST /api/auth/register HTTP/1.1" 500 Internal Server Error
+backend-1  | INFO:     Shutting down
+backend-1  | INFO:     Waiting for application shutdown.
+backend-1  | INFO:     Application shutdown complete.
+backend-1  | INFO:     Finished server process [1]
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | INFO:     Started server process [1]
+backend-1  | INFO:     Waiting for application startup.
+backend-1  | DEBUG: SENTRY_DSN='...'
+backend-1  | Warning: Sentry initialization failed: Unsupported scheme ''
+backend-1  | 🔍 Validating environment configuration...
+backend-1  | 
+backend-1  | ⚠️  WARNINGS:
+backend-1  |   - Feature 'storage' disabled due to missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   - Feature 'voice_cloning' disabled due to missing: ELEVENLABS_API_KEY
+backend-1  |   - Feature 'payments' disabled due to missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  |   - Recommended variable not set: ALLOWED_ORIGINS
+backend-1  |   - JWT_SECRET_KEY should be at least 32 characters for security
+backend-1  |   - DEBUG mode is enabled - should be disabled in production!
+backend-1  | 
+backend-1  | 📦 Feature Status:
+backend-1  |   ✅ Story Generation
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T19:51:56.210638", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:51:56.323216", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:51:56.323630", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T19:51:56.424157", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:51:56.542267", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:51:56.543103", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend-1  | {"timestamp": "2026-01-04T19:53:14.511301", "level": "INFO", "logger": "root", "message": "GET /api/health", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | [ff28f805-d1e8-42b9-9e0a-17b0182e801a] GET /api/health - 200 (0.000s)
+backend-1  | {"timestamp": "2026-01-04T19:53:14.513105", "level": "INFO", "logger": "root", "message": "Response 200", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:52846 - "GET /api/health HTTP/1.1" 200 OK
+backend-1  | {"timestamp": "2026-01-04T19:53:16.170518", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | {"timestamp": "2026-01-04T19:53:16.178617", "level": "WARNING", "logger": "passlib.handlers.bcrypt", "message": "(trapped) error reading bcrypt version", "module": "bcrypt", "function": "_load_backend_mixin", "line": 622, "exception": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.11/site-packages/passlib/handlers/bcrypt.py\", line 620, in _load_backend_mixin\n    version = _bcrypt.__about__.__version__\n              ^^^^^^^^^^^^^^^^^\nAttributeError: module 'bcrypt' has no attribute '__about__'"}
+backend-1  | [31e10bc3-5bd0-4364-b8ff-54c04cc1cce7] POST /api/auth/register - 400 (0.022s)
+backend-1  | {"timestamp": "2026-01-04T19:53:16.193342", "level": "INFO", "logger": "root", "message": "Response 400", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:52860 - "POST /api/auth/register HTTP/1.1" 400 Bad Request
+backend-1  | {"timestamp": "2026-01-04T19:53:32.359292", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | {"timestamp": "2026-01-04T19:53:32.361269", "level": "WARNING", "logger": "passlib.handlers.bcrypt", "message": "(trapped) error reading bcrypt version", "module": "bcrypt", "function": "_load_backend_mixin", "line": 622, "exception": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.11/site-packages/passlib/handlers/bcrypt.py\", line 620, in _load_backend_mixin\n    version = _bcrypt.__about__.__version__\n              ^^^^^^^^^^^^^^^^^\nAttributeError: module 'bcrypt' has no attribute '__about__'"}
+backend-1  | [a6df20ff-a8de-4068-a885-7f94abcf7563] POST /api/auth/register - 400 (0.007s)
+backend-1  | {"timestamp": "2026-01-04T19:53:32.367135", "level": "INFO", "logger": "root", "message": "Response 400", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:57110 - "POST /api/auth/register HTTP/1.1" 400 Bad Request
+backend-1  | {"timestamp": "2026-01-04T19:54:18.312504", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | {"timestamp": "2026-01-04T19:54:18.315211", "level": "WARNING", "logger": "passlib.handlers.bcrypt", "message": "(trapped) error reading bcrypt version", "module": "bcrypt", "function": "_load_backend_mixin", "line": 622, "exception": "Traceback (most recent call last):\n  File \"/usr/local/lib/python3.11/site-packages/passlib/handlers/bcrypt.py\", line 620, in _load_backend_mixin\n    version = _bcrypt.__about__.__version__\n              ^^^^^^^^^^^^^^^^^\nAttributeError: module 'bcrypt' has no attribute '__about__'"}
+backend-1  | [100995c3-55aa-4949-a4e0-5e89bfe4430f] POST /api/auth/register - 400 (0.008s)
+backend-1  | {"timestamp": "2026-01-04T19:54:18.321428", "level": "INFO", "logger": "root", "message": "Response 400", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:33000 - "POST /api/auth/register HTTP/1.1" 400 Bad Request
+backend-1  | INFO:     Shutting down
+backend-1  | INFO:     Waiting for application shutdown.
+backend-1  | INFO:     Application shutdown complete.
+backend-1  | INFO:     Finished server process [1]
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | INFO:     Started server process [1]
+backend-1  | INFO:     Waiting for application startup.
+backend-1  | DEBUG: SENTRY_DSN='...'
+backend-1  | Warning: Sentry initialization failed: Unsupported scheme ''
+backend-1  | 🔍 Validating environment configuration...
+backend-1  | 
+backend-1  | ⚠️  WARNINGS:
+backend-1  |   - Feature 'storage' disabled due to missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   - Feature 'voice_cloning' disabled due to missing: ELEVENLABS_API_KEY
+backend-1  |   - Feature 'payments' disabled due to missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  |   - Recommended variable not set: ALLOWED_ORIGINS
+backend-1  |   - JWT_SECRET_KEY should be at least 32 characters for security
+backend-1  |   - DEBUG mode is enabled - should be disabled in production!
+backend-1  | 
+backend-1  | 📦 Feature Status:
+backend-1  |   ✅ Story Generation
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T19:54:43.679561", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:54:43.786442", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:54:43.786888", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T19:54:43.895221", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:54:43.991686", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:54:43.992264", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)

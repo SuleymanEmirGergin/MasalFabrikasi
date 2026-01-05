@@ -1,0 +1,4 @@
+🚀 Masal Fabrikası Backend Test Başlıyor...
+👤 Kullanıcı oluşturuluyor: test_18ca3434@example.com
+❌ Kayıt başarısız: 500
+📄 Response Body: {"success":false,"error":{"code":"HTTP_ERROR","message":"Kayıt sırasında hata oluştu: 'generator' object does not support the asynchronous context manager protocol","details":{},"request_id":"4f2a2153-9167-456e-a3cc-a6a2381ec511","timestamp":"2026-01-04T19:50:47.577349"}}

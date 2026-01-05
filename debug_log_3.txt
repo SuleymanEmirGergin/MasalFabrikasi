@@ -1,0 +1,13 @@
+🔍 Starting granular import check...
+👉 Importing app.routers.story... ✅ OK
+👉 Importing app.routers.health... ✅ OK
+👉 Importing app.routers.character... ✅ OK
+👉 Importing app.routers.user... ✅ OK
+👉 Importing app.routers.challenge... ✅ OK
+👉 Importing app.routers.quiz... ✅ OK
+👉 Importing app.routers.analytics... ✅ OK
+👉 Importing app.routers.social... ✅ OK
+👉 Importing app.routers.media... ✅ OK
+👉 Importing app.routers.ai_tools... ✅ OK
+👉 Importing app.routers.story_features... ✅ OK
+👉 Importing app.routers.story_advanced_features... 

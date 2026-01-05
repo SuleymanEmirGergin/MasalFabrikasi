@@ -1,0 +1,100 @@
+backend-1  |     from langchain_core.messages.content import (
+backend-1  |   File "/usr/local/lib/python3.11/site-packages/langchain_core/messages/__init__.py", line 6, in <module>
+backend-1  |     from langchain_core.utils.utils import LC_AUTO_PREFIX, LC_ID_PREFIX, ensure_id
+backend-1  |   File "/usr/local/lib/python3.11/site-packages/langchain_core/utils/utils.py", line 19, in <module>
+backend-1  |     from langchain_core.utils.pydantic import (
+backend-1  |   File "/usr/local/lib/python3.11/site-packages/langchain_core/utils/pydantic.py", line 23, in <module>
+backend-1  |     from pydantic import (  # type: ignore[deprecated]
+backend-1  |   File "/usr/local/lib/python3.11/site-packages/pydantic/__init__.py", line 372, in __getattr__
+backend-1  |     'AllowInfNan': (__spec__.parent, '.types'),
+backend-1  |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend-1  |   File "/usr/local/lib/python3.11/importlib/__init__.py", line 126, in import_module
+backend-1  |     return _bootstrap._gcd_import(name[level:], package, level)
+backend-1  |            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+backend-1  |   File "/usr/local/lib/python3.11/site-packages/pydantic/deprecated/class_validators.py", line 12, in <module>
+backend-1  |     from .._internal import _decorators, _decorators_v1
+backend-1  |   File "/usr/local/lib/python3.11/site-packages/pydantic/_internal/_decorators_v1.py", line 12, in <module>
+backend-1  |     from ._utils import can_be_positional
+backend-1  | ImportError: cannot import name 'can_be_positional' from 'pydantic._internal._utils' (/usr/local/lib/python3.11/site-packages/pydantic/_internal/_utils.py)
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | INFO:     Started server process [1]
+backend-1  | INFO:     Waiting for application startup.
+backend-1  | DEBUG: SENTRY_DSN='...'
+backend-1  | Warning: Sentry initialization failed: Unsupported scheme ''
+backend-1  | 🔍 Validating environment configuration...
+backend-1  | 
+backend-1  | ⚠️  WARNINGS:
+backend-1  |   - Feature 'storage' disabled due to missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   - Feature 'voice_cloning' disabled due to missing: ELEVENLABS_API_KEY
+backend-1  |   - Feature 'payments' disabled due to missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  |   - Recommended variable not set: ALLOWED_ORIGINS
+backend-1  |   - JWT_SECRET_KEY should be at least 32 characters for security
+backend-1  |   - DEBUG mode is enabled - should be disabled in production!
+backend-1  | 
+backend-1  | 📦 Feature Status:
+backend-1  |   ✅ Story Generation
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T19:48:34.927079", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:48:35.044200", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:48:35.045152", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T19:48:35.142017", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:48:35.242122", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:48:35.242570", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend-1  | INFO:     Shutting down
+backend-1  | INFO:     Waiting for application shutdown.
+backend-1  | INFO:     Application shutdown complete.
+backend-1  | INFO:     Finished server process [1]
+backend-1  | /usr/local/lib/python3.11/site-packages/pydub/utils.py:170: RuntimeWarning: Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work
+backend-1  |   warn("Couldn't find ffmpeg or avconv - defaulting to ffmpeg, but may not work", RuntimeWarning)
+backend-1  | INFO:     Started server process [1]
+backend-1  | INFO:     Waiting for application startup.
+backend-1  | DEBUG: SENTRY_DSN='...'
+backend-1  | Warning: Sentry initialization failed: Unsupported scheme ''
+backend-1  | 🔍 Validating environment configuration...
+backend-1  | 
+backend-1  | ⚠️  WARNINGS:
+backend-1  |   - Feature 'storage' disabled due to missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   - Feature 'voice_cloning' disabled due to missing: ELEVENLABS_API_KEY
+backend-1  |   - Feature 'payments' disabled due to missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  |   - Recommended variable not set: ALLOWED_ORIGINS
+backend-1  |   - JWT_SECRET_KEY should be at least 32 characters for security
+backend-1  |   - DEBUG mode is enabled - should be disabled in production!
+backend-1  | 
+backend-1  | 📦 Feature Status:
+backend-1  |   ✅ Story Generation
+backend-1  |   ❌ Storage
+backend-1  |      Missing: SUPABASE_KEY, SUPABASE_STORAGE_BUCKET
+backend-1  |   ❌ Voice Cloning
+backend-1  |      Missing: ELEVENLABS_API_KEY
+backend-1  |   ❌ Payments
+backend-1  |      Missing: STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET
+backend-1  | 
+backend-1  | ✅ Environment validation passed!
+backend-1  | {"timestamp": "2026-01-04T19:49:12.361448", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:49:12.471553", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:49:12.472278", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for images: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | {"timestamp": "2026-01-04T19:49:12.767066", "level": "INFO", "logger": "httpx", "message": "HTTP Request: GET https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 200 OK\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:49:12.868393", "level": "INFO", "logger": "httpx", "message": "HTTP Request: POST https://fulntpwtqxoriesyovyq.supabase.co/storage/v1/bucket \"HTTP/2 400 Bad Request\"", "module": "_client", "function": "_send_single_request", "line": 1038}
+backend-1  | {"timestamp": "2026-01-04T19:49:12.868800", "level": "WARNING", "logger": "app.services.cloud_storage_service", "message": "Bucket check/create failed for audio: {'statusCode': 403, 'error': Unauthorized, 'message': new row violates row-level security policy}", "module": "cloud_storage_service", "function": "_ensure_bucket_exists", "line": 56}
+backend-1  | INFO:     Application startup complete.
+backend-1  | INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+backend-1  | {"timestamp": "2026-01-04T19:49:37.257106", "level": "INFO", "logger": "root", "message": "GET /api/health", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | [a785f00f-78c5-46d2-9291-c86e2fd05db8] GET /api/health - 200 (0.000s)
+backend-1  | {"timestamp": "2026-01-04T19:49:37.258345", "level": "INFO", "logger": "root", "message": "Response 200", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:35684 - "GET /api/health HTTP/1.1" 200 OK
+backend-1  | {"timestamp": "2026-01-04T19:49:38.915009", "level": "INFO", "logger": "root", "message": "POST /api/auth/register", "module": "middleware", "function": "dispatch", "line": 31, "request_id": "unknown"}
+backend-1  | [d3972db8-ab9f-4103-af6a-ce62b5acb5d0] POST /api/auth/register - 500 (0.007s)
+backend-1  | {"timestamp": "2026-01-04T19:49:38.922161", "level": "INFO", "logger": "root", "message": "Response 500", "module": "middleware", "function": "dispatch", "line": 45, "request_id": "unknown"}
+backend-1  | INFO:     127.0.0.1:60524 - "POST /api/auth/register HTTP/1.1" 500 Internal Server Error
