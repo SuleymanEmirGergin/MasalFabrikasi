@@ -17,8 +17,8 @@ RUN pip install --no-cache-dir -r $(test -f requirements-production.txt && echo 
 # Copy application
 COPY . .
 
-# Create storage directories
-RUN mkdir -p storage/images storage/audio
+# Create storage and logs directories
+RUN mkdir -p storage/images storage/audio logs
 
 # Expose port
 EXPOSE 8000
