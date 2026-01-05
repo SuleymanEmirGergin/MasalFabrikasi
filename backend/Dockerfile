@@ -7,11 +7,11 @@ RUN apt-get update && apt-get install -y \
     postgresql-client \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements
-COPY requirements.txt .
+# Copy requirements (use production requirements if exists, fallback to regular)
+COPY requirements*.txt ./
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies (prefer production requirements)
+RUN pip install --no-cache-dir -r $(test -f requirements-production.txt && echo requirements-production.txt || echo requirements.txt)
 
 # Copy application
 COPY . .
