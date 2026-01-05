@@ -28,6 +28,8 @@ aiofiles==23.2.1
 httpx>=0.25.1,<0.28.0
 pydantic==2.5.0
 pydantic-settings==2.1.0
+slowapi>=0.1.8
+requests>=2.31.0
 
 # Audio (lightweight)
 gtts==2.4.0
