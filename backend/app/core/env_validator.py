@@ -130,14 +130,18 @@ class EnvironmentValidator:
             if not status["enabled"] and status["missing_vars"]:
                 print(f"     Missing: {', '.join(status['missing_vars'])}")
         
-        # Exit if critical errors
+        # Exit if critical errors - DISABLED FOR RAILWAY DEPLOYMENT
+        # App will start but features requiring these vars will be limited
         if not results["valid"]:
-            print("\n💥 Cannot start application due to missing required configuration.")
-            print("   Please check .env file and set all required variables.")
-            print(f"\n   Missing required: {', '.join(results['missing_required'])}")
-            sys.exit(1)
+            print("\n⚠️  Some required configuration is missing.")
+            print("   App will start but some features may be limited.")
+            print(f"\n   Missing: {', '.join(results['missing_required'])}")
+            print("\n   Set these in Railway Variables to enable full functionality.")
+            # Don't exit - let app start with limited features
+            # sys.exit(1)
+        else:
+            print("\n✅ Environment validation passed!")
         
-        print("\n✅ Environment validation passed!")
         return results
 
 
