@@ -1,4 +1,0 @@
-🚀 Masal Fabrikası Backend Test Başlıyor...
-👤 Kullanıcı oluşturuluyor: test_15649f43@example.com
-❌ Kayıt başarısız: 500
-📄 Response Body: {"success":false,"error":{"code":"HTTP_ERROR","message":"Kayıt sırasında hata oluştu: Object of type UUID is not JSON serializable","details":{},"request_id":"1010f466-a27d-4471-88b4-30f7181def3e","timestamp":"2026-01-04T20:08:29.603763"}}

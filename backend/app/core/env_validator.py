@@ -25,7 +25,7 @@ class EnvironmentValidator:
     OPTIONAL_FEATURES = {
         "payments": ["STRIPE_SECRET_KEY", "STRIPE_WEBHOOK_SECRET"],
         "monitoring": ["SENTRY_DSN"],
-        "cloud_storage": ["CLOUDINARY_CLOUD_NAME", "CLOUDINARY_API_KEY"]
+        # cloud_storage removed - using Supabase Storage, not Cloudinary
     }
     
     RECOMMENDED_VARS = [

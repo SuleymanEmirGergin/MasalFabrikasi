@@ -93,7 +93,9 @@ def generate_full_story_task(self, job_id: str):
             creativity=input_data.get('creativity', 0.8),
             pacing=input_data.get('pacing', 'medium'),
             perspective=input_data.get('perspective', 'third'),
-            vocabulary=input_data.get('vocabulary', 'normal')
+            vocabulary=input_data.get('vocabulary', 'normal'),
+            age_group=input_data.get('age_group', '3-6'),
+            pedagogical_theme=input_data.get('pedagogical_theme')
         ))
         
         # Create partial story in DB

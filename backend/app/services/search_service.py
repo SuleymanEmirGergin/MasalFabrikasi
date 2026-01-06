@@ -1,19 +1,23 @@
+"""
+Search Service - Semantic search using Gemini embeddings (google-genai)
+"""
 from sqlalchemy.orm import Session
 from app.models import Story
 from typing import List
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from app.core.config import settings
 from sqlalchemy import text
+
 
 class SearchService:
     def __init__(self, db: Session):
         self.db = db
         self.client = None
         
-        # Configure Gemini for embeddings
+        # Configure Gemini client for embeddings
         if settings.EMBEDDING_API_KEY:
-            genai.configure(api_key=settings.EMBEDDING_API_KEY)
-            self.client = genai
+            self.client = genai.Client(api_key=settings.EMBEDDING_API_KEY)
         
     def update_story_embedding(self, story_id: str):
         """
@@ -28,14 +32,16 @@ class SearchService:
             if not story:
                 return
             
-            # Gemini embedding API
-            result = genai.embed_content(
+            # Gemini embedding API (new google-genai syntax)
+            response = self.client.models.embed_content(
                 model=settings.EMBEDDING_MODEL,
-                content=story.story_text[:8000],
-                task_type="retrieval_document"
+                contents=story.story_text[:8000],
+                config=types.EmbedContentConfig(
+                    task_type="RETRIEVAL_DOCUMENT"
+                )
             )
             
-            embedding = result['embedding']
+            embedding = response.embeddings[0].values
             
             # Store embedding in database
             story.embedding = embedding
@@ -57,12 +63,14 @@ class SearchService:
 
         try:
             # Generate query embedding
-            result = genai.embed_content(
+            response = self.client.models.embed_content(
                 model=settings.EMBEDDING_MODEL,
-                content=query,
-                task_type="retrieval_query"
+                contents=query,
+                config=types.EmbedContentConfig(
+                    task_type="RETRIEVAL_QUERY"
+                )
             )
-            query_embedding = result['embedding']
+            query_embedding = response.embeddings[0].values
             
             # Vector similarity search using pgvector cosine distance
             # <=> is the cosine distance operator in pgvector

@@ -65,13 +65,18 @@ class StoryService:
         creativity: float = 0.8,
         pacing: str = "medium",
         perspective: str = "third",
-        vocabulary: str = "normal"
+        vocabulary: str = "normal",
+        age_group: str = "3-6",
+        pedagogical_theme: str = None
     ) -> str:
         """
         Final hikaye üretimi için GPT-OSS (Wiro) kullanır.
         Uses WiroClient run_and_wait for robust long-running generation.
         """
-        prompt = self._create_prompt(theme, language, story_type, pacing, perspective, vocabulary)
+        prompt = self._create_prompt(
+            theme, language, story_type, pacing, perspective, vocabulary, 
+            age_group=age_group, pedagogical_theme=pedagogical_theme
+        )
         
         # If it's Wiro OSS model, use the specialized WiroClient
         if "gpt-oss" in settings.GPT_MODEL.lower():
@@ -128,7 +133,9 @@ class StoryService:
         story_type: str = "masal",
         pacing: str = "medium",
         perspective: str = "third",
-        vocabulary: str = "normal"
+        vocabulary: str = "normal",
+        age_group: str = "3-6",
+        pedagogical_theme: str = None
     ) -> str:
         """Hikâye üretimi için prompt oluşturur."""
         # Hikâye türüne göre stil belirle
@@ -152,26 +159,33 @@ class StoryService:
             "fast": "Hikayeyi hızlı ve aksiyon odaklı bir tempoda anlat. Olaylar hızlı gelişsin."
         }.get(pacing, "Dengeli bir tempo kullan.")
         
-        perspective_instr = {
-            "first": "Hikayeyi birinci şahıs (ben dili) bakış açısıyla anlat.",
-            "third": "Hikayeyi üçüncü şahıs (o dili) bakış açısıyla anlat."
-        }.get(perspective, "Üçüncü şahıs bakış açısı kullan.")
-        
         vocab_instr = {
             "simple": "Basit, anlaşılır ve kısa cümleler kullan. Çocukların anlayabileceği bir dil olsun.",
             "normal": "Akıcı ve doğal bir dil kullan.",
             "complex": "Zengin, edebi ve betimleyici bir dil kullan. Karmaşık cümle yapıları ve geniş bir kelime dağarcığı kullan."
         }.get(vocabulary, "Doğal bir dil kullan.")
 
+        # Pedagogical Themes (Turkish)
+        pedagogical_prompts = {
+            "degerler": "Hikayede dürüstlük, paylaşmak veya yardımseverlik gibi temel insani değerleri işle.",
+            "matematik": "Hikayenin içine basit matematiksel kavramlar (sayılar, toplama vb.) gizle.",
+            "fen": "Hikayede doğa olayları veya basit bilimsel gerçekler hakkında merak uyandır.",
+            "dil": "Hikayede yeni kelimeler öğretmeye ve dil gelişimine odaklan.",
+            "duygusal": "Duyguları tanıma ve yönetme üzerine odaklan."
+        }
+        ped_instr = pedagogical_prompts.get(pedagogical_theme, "") if language == "tr" else ""
+
         if language == "tr":
             return f"""Aşağıdaki temaya göre {type_desc} bir hikâye yaz. 
 Hikâye 3-5 paragraf uzunluğunda olsun ve bir başlangıç, gelişme ve sonuç içersin.
 
+Hedef Kitle: {age_group} yaş arası çocuklar.
 Ayarlar:
 - Tür: {story_type}
 - Tempo: {pacing_instr}
 - Bakış Açısı: {perspective_instr}
 - Dil Seviyesi: {vocab_instr}
+- Pedagojik Odak: {ped_instr}
 
 Tema: {theme}
 
@@ -209,10 +223,9 @@ Hikâye:"""
 The story should be 3-5 paragraphs long and include a beginning, development, and conclusion.
 
 Settings:
-- Type: {story_type}
-- Pacing: {pacing_instr_en}
-- Perspective: {perspective_instr_en}
 - Language Level: {vocab_instr_en}
+- Pedagogical Focus: {pedagogical_theme if pedagogical_theme else "General creativity"}
+- Target Audience: Children aged {age_group}
 
 Theme: {theme}
 

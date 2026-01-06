@@ -245,6 +245,10 @@ app.include_router(bedtime_router.router, prefix="/api/bedtime", tags=["Bedtime 
 from app.routers import value_features_router
 app.include_router(value_features_router.router, prefix="/api/value", tags=["Value Features"])
 
+# Import Growth router
+from app.routers import growth
+app.include_router(growth.router, prefix="/api/growth", tags=["Growth & Waitlist"])
+
 # Import Metrics Router
 app.include_router(metrics_router.router, tags=["Monitoring"])
 

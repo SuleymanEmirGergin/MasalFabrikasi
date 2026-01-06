@@ -87,18 +87,33 @@ class CloudStorageService:
             loop = asyncio.get_event_loop()
             
             def _upload():
+                # WebP Dönüştürme ve Optimizasyon
+                from PIL import Image
+                import io
+
                 with open(file_path, 'rb') as f:
-                    # Content-type belirle
-                    content_type = "image/png"
-                    if file_path.endswith(".jpg") or file_path.endswith(".jpeg"):
-                        content_type = "image/jpeg"
-                    elif file_path.endswith(".webp"):
-                        content_type = "image/webp"
+                    img = Image.open(f)
+                    
+                    # RGB'ye çevir (PNG transparanlıklarını korumak için gerekirse RGBA kalsa da WebP destekler)
+                    if img.mode in ("RGBA", "P"):
+                        img = img.convert("RGBA")
+                    else:
+                        img = img.convert("RGB")
+                    
+                    # Bellekte WebP oluştur
+                    output = io.BytesIO()
+                    img.save(output, format="WEBP", quality=80)
+                    output.seek(0)
+                    
+                    # Storage yolu güncelle (.webp uzantısı ekle)
+                    nonlocal storage_path
+                    if not storage_path.endswith(".webp"):
+                        storage_path = os.path.splitext(storage_path)[0] + ".webp"
 
                     self.client.storage.from_(bucket_name).upload(
                         path=storage_path,
-                        file=f,
-                        file_options={"content-type": content_type, "upsert": "true"}
+                        file=output,
+                        file_options={"content-type": "image/webp", "upsert": "true"}
                     )
                 
                 # Public URL al

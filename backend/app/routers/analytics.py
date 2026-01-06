@@ -90,3 +90,85 @@ async def query_analytics(request: QueryAnalyticsRequest):
         request.end_date,
         request.filters
     )
+
+
+# ============================================
+# MOBILE APP EVENT TRACKING (New)
+# ============================================
+from fastapi import BackgroundTasks
+from datetime import datetime
+import logging
+
+logger = logging.getLogger(__name__)
+
+# In-memory storage for development (replace with database in production)
+mobile_analytics_events = []
+identified_users = {}
+
+
+class MobileAnalyticsEvent(BaseModel):
+    event: str
+    timestamp: str
+    properties: Dict = {}
+
+
+class IdentifyRequest(BaseModel):
+    userId: str
+    traits: Dict = {}
+    device: Dict = {}
+    timestamp: str
+
+
+async def process_mobile_event(event_data: dict):
+    """Background task to process mobile analytics event"""
+    try:
+        logger.info(f"Mobile Analytics: {event_data['event']} - {event_data.get('properties', {})}")
+        
+        mobile_analytics_events.append({
+            **event_data,
+            "processed_at": datetime.utcnow().isoformat()
+        })
+        
+        # Keep only last 1000 events in memory
+        if len(mobile_analytics_events) > 1000:
+            mobile_analytics_events.pop(0)
+            
+    except Exception as e:
+        logger.error(f"Failed to process mobile analytics event: {e}")
+
+
+@router.post("/event")
+async def track_mobile_event(event: MobileAnalyticsEvent, background_tasks: BackgroundTasks):
+    """Track an analytics event from the mobile app."""
+    background_tasks.add_task(process_mobile_event, event.dict())
+    return {"status": "accepted"}
+
+
+@router.post("/identify")
+async def identify_mobile_user(request: IdentifyRequest):
+    """Identify a user for personalized analytics tracking."""
+    try:
+        identified_users[request.userId] = {
+            "traits": request.traits,
+            "device": request.device,
+            "identified_at": request.timestamp,
+            "last_seen": datetime.utcnow().isoformat()
+        }
+        
+        logger.info(f"Mobile user identified: {request.userId}")
+        return {"status": "identified", "userId": request.userId}
+        
+    except Exception as e:
+        logger.error(f"Failed to identify mobile user: {e}")
+        return {"status": "error", "message": str(e)}
+
+
+@router.get("/mobile-stats")
+async def get_mobile_analytics_stats():
+    """Get mobile analytics statistics (admin only)."""
+    return {
+        "total_events": len(mobile_analytics_events),
+        "identified_users": len(identified_users),
+        "recent_events": mobile_analytics_events[-10:] if mobile_analytics_events else [],
+        "event_types": list(set(e.get("event") for e in mobile_analytics_events))
+    }

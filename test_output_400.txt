@@ -1,4 +1,0 @@
-🚀 Masal Fabrikası Backend Test Başlıyor...
-👤 Kullanıcı oluşturuluyor: test_c8fd50b3@example.com
-❌ Kayıt başarısız: 400
-📄 Response Body: {"success":false,"error":{"code":"HTTP_ERROR","message":"password cannot be longer than 72 bytes, truncate manually if necessary (e.g. my_password[:72])","details":{},"request_id":"a6df20ff-a8de-4068-a885-7f94abcf7563","timestamp":"2026-01-04T19:53:32.366721"}}

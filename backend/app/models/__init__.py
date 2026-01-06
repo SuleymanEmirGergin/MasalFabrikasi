@@ -418,3 +418,19 @@ class UserDevice(Base):
     
     # Relationships
     user = relationship("UserProfile", backref="devices")
+
+class Waitlist(Base):
+    """
+    Landing page email waitlist
+    """
+    __tablename__ = "waitlist"
+    
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    email = Column(String(255), unique=True, index=True, nullable=False)
+    source = Column(String(50), nullable=True, default="landing_page")
+    meta_data = Column("metadata", JSONB, default=dict, nullable=False)
+    
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    
+    def __repr__(self):
+        return f"<Waitlist(email={self.email})>"
