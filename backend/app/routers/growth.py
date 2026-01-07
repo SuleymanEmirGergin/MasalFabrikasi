@@ -13,7 +13,7 @@ router = APIRouter(tags=["Growth & Referrals"])
 
 @router.get("/ping")
 async def growth_ping():
-    return {"status": "growth_active", "version": "2.0.5"}
+    return {"status": "growth_active", "version": "2.0.6"}
 
 @router.get("/alembic-status")
 async def check_alembic_status():
