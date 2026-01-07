@@ -168,6 +168,10 @@ class Story(Base):
     # Embedding (Gemini embedding: 768 dimensions)
     embedding = Column(Vector(768), nullable=True)
 
+    # Sharing (Viral Growth Engine)
+    share_token = Column(String(100), unique=True, index=True, nullable=True)
+    is_public = Column(Boolean, default=False, nullable=False)
+
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
