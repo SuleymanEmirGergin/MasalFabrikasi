@@ -4,7 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Masal Fabrikası - Çocuklar İçin Sonsuz Hayal Gücü</title>
+    <title>Masal Fabrikası - AI Destekli Pedagojik Çocuk Masalları</title>
+    <meta name="description"
+        content="Çocuğunuzun kahramanı olduğu, yapay zeka destekli eğitici ve sihirli masallar dünyası. Hemen erken erişim için bekleme listesine katılın!">
+    <meta name="keywords"
+        content="masal, çocuk masalları, yapay zeka masal, eğitici masallar, uyku masalları, masal fabrikası">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Masal Fabrikası - Hayaller Canlanıyor">
+    <meta property="og:description" content="Yapay zeka ile çocuğunuza özel sihirli masallar üretin.">
+    <meta property="og:image" content="https://masalfabrikasi-production.up.railway.app/static/banner.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -16,6 +27,7 @@
         .gradient-text {
             background: linear-gradient(to right, #6366f1, #d946ef);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
@@ -79,14 +91,24 @@
                 </div>
                 <div id="waitlist-message" class="hidden text-sm font-medium text-green-600 mt-2"></div>
 
-                <div class="flex flex-col sm:flex-row gap-4 mt-8 opacity-60">
-                    <div class="flex items-center gap-2 text-sm font-semibold text-gray-400">
-                        <i data-lucide="apple"></i>
-                        Yakında App Store'da
+                <div class="flex flex-wrap gap-4 mt-8">
+                    <!-- App Store Badge Placeholder -->
+                    <div
+                        class="flex items-center gap-3 px-5 py-3 bg-gray-900 text-white rounded-2xl opacity-40 cursor-not-allowed transition hover:opacity-50">
+                        <i data-lucide="apple" class="w-6 h-6"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase font-bold text-gray-400">Yakında</div>
+                            <div class="text-sm font-bold">App Store</div>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-2 text-sm font-semibold text-gray-400">
-                        <i data-lucide="play"></i>
-                        Yakında Google Play'de
+                    <!-- Play Store Badge Placeholder -->
+                    <div
+                        class="flex items-center gap-3 px-5 py-3 bg-gray-900 text-white rounded-2xl opacity-40 cursor-not-allowed transition hover:opacity-50">
+                        <i data-lucide="play" class="w-6 h-6"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase font-bold text-gray-400">Yakında</div>
+                            <div class="text-sm font-bold">Google Play</div>
+                        </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-4 text-sm font-medium text-gray-500 pt-4">
@@ -317,7 +339,7 @@
             try {
                 // Not: Üretime geçerken backend URL'inizi buraya yazın
                 // const API_URL = 'https://your-backend.railway.app'; 
-                const API_URL = '/api/growth/waitlist';
+                const API_URL = 'https://masalfabrikasi-production.up.railway.app/api/growth/waitlist';
 
                 const response = await fetch(API_URL, {
                     method: 'POST',
