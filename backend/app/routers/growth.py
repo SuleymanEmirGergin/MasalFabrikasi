@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status, Body
 from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.models import Waitlist, UserProfile
+from app.models import Waitlist, UserProfile, Story
 from pydantic import EmailStr, BaseModel
 from typing import Optional
 import uuid
@@ -13,7 +13,7 @@ router = APIRouter(tags=["Growth & Referrals"])
 
 @router.get("/ping")
 async def growth_ping():
-    return {"status": "growth_active", "version": "2.0.3"}
+    return {"status": "growth_active", "version": "2.0.4"}
 
 @router.get("/alembic-status")
 async def check_alembic_status():
@@ -125,7 +125,6 @@ async def get_public_story(token: str, db: Session = Depends(get_db)):
 async def view_public_story(token: str, db: Session = Depends(get_db)):
     """WhatsApp/Instagram paylaşımı için masalın web önizleme sayfasını döner."""
     try:
-        from app.models import Story
         story = db.query(Story).filter(Story.share_token == token, Story.is_public == True).first()
         if not story:
             return HTMLResponse(content="<h1>Masal bulunamadı</h1>", status_code=404)
