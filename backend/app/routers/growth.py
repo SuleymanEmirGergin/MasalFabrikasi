@@ -25,15 +25,23 @@ async def check_alembic_status():
         return {"status": "error", "error": str(e), "output": getattr(e, 'stderr', 'No stderr')}
 
 @router.get("/story-origin")
-async def get_story_origin():
+async def get_story_origin(db: Session = Depends(get_db)):
     try:
         import inspect
+        from sqlalchemy import inspect as sa_inspect
+        from app.models import Story
+        
         origin = inspect.getfile(Story)
         attrs = [a for a in dir(Story) if not a.startswith("__")]
+        
+        inspector = sa_inspect(db.get_bind())
+        columns = [c['name'] for c in inspector.get_columns('stories')]
+        
         return {
             "origin": origin,
             "has_share_token": hasattr(Story, "share_token"),
-            "attributes": attrs
+            "attributes": attrs,
+            "db_columns": columns
         }
     except Exception as e:
         return {"error": str(e)}
