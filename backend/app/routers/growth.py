@@ -13,7 +13,7 @@ router = APIRouter(tags=["Growth & Referrals"])
 
 @router.get("/ping")
 async def growth_ping():
-    return {"status": "growth_active", "version": "2.0.1"}
+    return {"status": "growth_active", "version": "2.0.2"}
 
 class WaitlistCreate(BaseModel):
     email: EmailStr
