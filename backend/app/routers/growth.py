@@ -115,81 +115,84 @@ async def get_public_story(token: str, db: Session = Depends(get_db)):
 @router.get("/story/view/{token}", response_class=HTMLResponse)
 async def view_public_story(token: str, db: Session = Depends(get_db)):
     """WhatsApp/Instagram paylaşımı için masalın web önizleme sayfasını döner."""
-    from app.models import Story
-    story = db.query(Story).filter(Story.share_token == token, Story.is_public == True).first()
-    if not story:
-        return HTMLResponse(content="<h1>Masal bulunamadı</h1>", status_code=404)
-    
-    # Open Graph meta etiketleri ile zenginleştirilmiş HTML
-    html_content = f"""
-    <!DOCTYPE html>
-    <html lang="tr">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{story.title} - Masal Fabrikası</title>
+    try:
+        from app.models import Story
+        story = db.query(Story).filter(Story.share_token == token, Story.is_public == True).first()
+        if not story:
+            return HTMLResponse(content="<h1>Masal bulunamadı</h1>", status_code=404)
         
-        <!-- Open Graph Meta Etiketleri -->
-        <meta property="og:title" content="{story.title} - Masal Fabrikası">
-        <meta property="og:description" content="AI ile üretilen bu harika masalı oku: {story.theme[:100]}...">
-        <meta property="og:image" content="{story.image_url}">
-        <meta property="og:url" content="https://masalfabrikasi.ai/shared/{token}">
-        <meta property="og:type" content="article">
-        
-        <!-- Twitter Card -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="{story.title}">
-        <meta name="twitter:description" content="Yapay zeka ile çocuğunuza özel masallar üretin.">
-        <meta name="twitter:image" content="{story.image_url}">
+        # Open Graph meta etiketleri ile zenginleştirilmiş HTML
+        html_content = f"""
+        <!DOCTYPE html>
+        <html lang="tr">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>{story.title} - Masal Fabrikası</title>
+            
+            <!-- Open Graph Meta Etiketleri -->
+            <meta property="og:title" content="{story.title} - Masal Fabrikası">
+            <meta property="og:description" content="AI ile üretilen bu harika masalı oku: {story.theme[:100]}...">
+            <meta property="og:image" content="{story.image_url}">
+            <meta property="og:url" content="https://masalfabrikasi.ai/shared/{token}">
+            <meta property="og:type" content="article">
+            
+            <!-- Twitter Card -->
+            <meta name="twitter:card" content="summary_large_image">
+            <meta name="twitter:title" content="{story.title}">
+            <meta name="twitter:description" content="Yapay zeka ile çocuğunuza özel masallar üretin.">
+            <meta name="twitter:image" content="{story.image_url}">
 
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
-        <style>
-            body {{ font-family: 'Outfit', sans-serif; }}
-            .story-container {{ 
-                background: linear-gradient(to bottom, #fef2f2, #ffffff);
-            }}
-        </style>
-    </head>
-    <body class="bg-gray-50">
-        <div class="max-w-2xl mx-auto min-h-screen story-container shadow-xl overflow-hidden">
-            <!-- Header -->
-            <div class="p-6 bg-white border-b border-gray-100 flex justify-between items-center">
-                <div class="flex items-center gap-2 font-bold text-indigo-600">
-                    <span>✨ Masal Fabrikası</span>
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&display=swap" rel="stylesheet">
+            <style>
+                body {{ font-family: 'Outfit', sans-serif; }}
+                .story-container {{ 
+                    background: linear-gradient(to bottom, #fef2f2, #ffffff);
+                }}
+            </style>
+        </head>
+        <body class="bg-gray-50">
+            <div class="max-w-2xl mx-auto min-h-screen story-container shadow-xl overflow-hidden">
+                <!-- Header -->
+                <div class="p-6 bg-white border-b border-gray-100 flex justify-between items-center">
+                    <div class="flex items-center gap-2 font-bold text-indigo-600">
+                        <span>✨ Masal Fabrikası</span>
+                    </div>
+                    <a href="https://masalfabrikasi.ai" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-full font-bold">Uygulamayı İndir</a>
                 </div>
-                <a href="https://masalfabrikasi.ai" class="text-xs bg-indigo-600 text-white px-3 py-1.5 rounded-full font-bold">Uygulamayı İndir</a>
-            </div>
 
-            <!-- Content -->
-            <div class="p-8 space-y-8">
-                <img src="{story.image_url}" class="w-full h-80 object-cover rounded-3xl shadow-lg border-4 border-white" alt="Masal Görseli">
-                
-                <div class="text-center space-y-4">
-                    <h1 class="text-4xl font-extrabold text-gray-900 leading-tight">{story.title}</h1>
-                    <div class="inline-block px-4 py-1 bg-indigo-50 text-indigo-600 rounded-full text-sm font-bold tracking-wide uppercase">
-                         {story.language.upper()} MASAL
+                <!-- Content -->
+                <div class="p-8 space-y-8">
+                    <img src="{story.image_url}" class="w-full h-80 object-cover rounded-3xl shadow-lg border-4 border-white" alt="Masal Görseli">
+                    
+                    <div class="text-center space-y-4">
+                        <h1 class="text-4xl font-extrabold text-gray-900 leading-tight">{story.title}</h1>
+                        <div class="inline-block px-4 py-1 bg-indigo-50 text-indigo-600 rounded-full text-sm font-bold tracking-wide uppercase">
+                             {(story.language or 'tr').upper()} MASAL
+                        </div>
+                    </div>
+
+                    <div class="prose prose-indigo max-w-none">
+                        <p class="text-xl text-gray-700 leading-relaxed whitespace-pre-wrap">{story.story_text}</p>
                     </div>
                 </div>
 
-                <div class="prose prose-indigo max-w-none">
-                    <p class="text-xl text-gray-700 leading-relaxed whitespace-pre-wrap">{story.story_text}</p>
+                <!-- CTA Footer -->
+                <div class="p-10 bg-indigo-600 text-white text-center space-y-6">
+                    <h2 class="text-2xl font-bold">Kendi Masalını Üretmek İster Misin?</h2>
+                    <p class="text-indigo-100 opacity-80">Çocuğunun kahramanı olduğu sınırsız masallar dünyasına katıl.</p>
+                    <div class="flex justify-center gap-4">
+                        <a href="#" class="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-bold shadow-lg hover:scale-105 transition">Hemen Başla</a>
+                    </div>
                 </div>
             </div>
-
-            <!-- CTA Footer -->
-            <div class="p-10 bg-indigo-600 text-white text-center space-y-6">
-                <h2 class="text-2xl font-bold">Kendi Masalını Üretmek İster Misin?</h2>
-                <p class="text-indigo-100 opacity-80">Çocuğunun kahramanı olduğu sınırsız masallar dünyasına katıl.</p>
-                <div class="flex justify-center gap-4">
-                    <a href="#" class="bg-white text-indigo-600 px-8 py-3 rounded-2xl font-bold shadow-lg hover:scale-105 transition">Hemen Başla</a>
-                </div>
-            </div>
-        </div>
-    </body>
-    </html>
-    """
-    return HTMLResponse(content=html_content)
+        </body>
+        </html>
+        """
+        return HTMLResponse(content=html_content)
+    except Exception as e:
+        return HTMLResponse(content=f"<h1>Hata: {str(e)}</h1>", status_code=500)
 
 @router.post("/waitlist/invite")
 async def invite_waitlist_user(email: str, db: Session = Depends(get_db)):
