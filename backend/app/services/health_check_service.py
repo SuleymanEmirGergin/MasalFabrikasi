@@ -68,22 +68,22 @@ class HealthCheckService:
         try:
             from app.celery_app import celery_app
             
-            # Get active workers
-            inspect = celery_app.control.inspect()
-            active_workers = inspect.active()
+            # Get active workers using ping (faster and more reliable for health checks)
+            inspect = celery_app.control.inspect(timeout=1.0)
+            ping_results = inspect.ping()
             
-            if not active_workers:
+            if not ping_results:
                 return {
                     "status": "warning",
                     "message": "No active workers found"
                 }
             
-            worker_count = len(active_workers)
+            worker_count = len(ping_results)
             
             return {
                 "status": "healthy",
                 "active_workers": worker_count,
-                "worker_names": list(active_workers.keys())
+                "worker_names": list(ping_results.keys())
             }
         except Exception as e:
             return {
