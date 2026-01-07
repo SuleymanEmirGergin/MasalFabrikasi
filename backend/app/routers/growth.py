@@ -11,6 +11,10 @@ import string
 
 router = APIRouter(tags=["Growth & Referrals"])
 
+@router.get("/ping")
+async def growth_ping():
+    return {"status": "growth_active", "version": "2.0.1"}
+
 class WaitlistCreate(BaseModel):
     email: EmailStr
     source: Optional[str] = "landing_page"
