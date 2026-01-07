@@ -13,7 +13,16 @@ router = APIRouter(tags=["Growth & Referrals"])
 
 @router.get("/ping")
 async def growth_ping():
-    return {"status": "growth_active", "version": "2.0.2"}
+    return {"status": "growth_active", "version": "2.0.3"}
+
+@router.get("/alembic-status")
+async def check_alembic_status():
+    import subprocess
+    try:
+        result = subprocess.run(["alembic", "current"], capture_output=True, text=True, check=True)
+        return {"status": "success", "current": result.stdout}
+    except Exception as e:
+        return {"status": "error", "error": str(e), "output": getattr(e, 'stderr', 'No stderr')}
 
 class WaitlistCreate(BaseModel):
     email: EmailStr
