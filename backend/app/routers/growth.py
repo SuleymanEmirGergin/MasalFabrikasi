@@ -24,6 +24,20 @@ async def check_alembic_status():
     except Exception as e:
         return {"status": "error", "error": str(e), "output": getattr(e, 'stderr', 'No stderr')}
 
+@router.get("/story-origin")
+async def get_story_origin():
+    try:
+        import inspect
+        origin = inspect.getfile(Story)
+        attrs = [a for a in dir(Story) if not a.startswith("__")]
+        return {
+            "origin": origin,
+            "has_share_token": hasattr(Story, "share_token"),
+            "attributes": attrs
+        }
+    except Exception as e:
+        return {"error": str(e)}
+
 class WaitlistCreate(BaseModel):
     email: EmailStr
     source: Optional[str] = "landing_page"
