@@ -23,5 +23,5 @@ RUN mkdir -p storage/images storage/audio logs
 # Expose port
 EXPOSE 8000
 
-# Run migrations and start application
-CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"]
+# Run migrations and start application (using ; to allow debug even if migration fails)
+CMD ["sh", "-c", "alembic upgrade head; uvicorn main:app --host 0.0.0.0 --port 8000"]
