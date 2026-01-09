@@ -276,7 +276,8 @@ class AuthService:
         # Bcrypt has a limiting of 72 bytes. We need to truncate if necessary.
         # Also log the length for debugging properly.
         print(f"[DEBUG] Hashing password of length: {len(password)}")
-        return pwd_context.hash(password[:72])
+        # Aggressive truncation to 50 chars to be safe from bytes expansion
+        return pwd_context.hash(password[:50])
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Şifreyi doğrular."""
