@@ -12,7 +12,7 @@ from app.core.database import AsyncSessionLocal
 from app.models import User
 from app.core.config import settings
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
 class AuthService:
     def __init__(self):
@@ -273,11 +273,7 @@ class AuthService:
 
     def hash_password(self, password: str) -> str:
         """Şifreyi hashler."""
-        # Bcrypt has a limiting of 72 bytes. We need to truncate if necessary.
-        # Also log the length for debugging properly.
-        print(f"[DEBUG] Hashing password of length: {len(password)}")
-        # Aggressive truncation to 50 chars to be safe from bytes expansion
-        return pwd_context.hash(password[:50])
+        return pwd_context.hash(password)
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Şifreyi doğrular."""
