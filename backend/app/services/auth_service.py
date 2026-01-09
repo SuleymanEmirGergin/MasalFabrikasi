@@ -273,7 +273,10 @@ class AuthService:
 
     def hash_password(self, password: str) -> str:
         """Şifreyi hashler."""
-        return pwd_context.hash(password)
+        # Bcrypt has a limiting of 72 bytes. We need to truncate if necessary.
+        # Also log the length for debugging properly.
+        print(f"[DEBUG] Hashing password of length: {len(password)}")
+        return pwd_context.hash(password[:72])
 
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         """Şifreyi doğrular."""

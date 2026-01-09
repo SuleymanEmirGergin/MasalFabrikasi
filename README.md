@@ -1,5 +1,11 @@
 # Masal Fabrikası 🎨✨
 
+[![CI/CD Pipeline](https://github.com/yourusername/masal-fabrikasi/actions/workflows/ci-cd.yml/badge.svg)](https://github.com/yourusername/masal-fabrikasi/actions/workflows/ci-cd.yml)
+[![codecov](https://codecov.io/gh/yourusername/masal-fabrikasi/branch/main/graph/badge.svg)](https://codecov.io/gh/yourusername/masal-fabrikasi)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![React Native](https://img.shields.io/badge/React%20Native-0.76-61DAFB?logo=react)](https://reactnative.dev/)
+
 ![Masal Fabrikası Banner](./assets/banner.png)
 
 **AI-Powered Interactive Storytelling Platform for Children**
