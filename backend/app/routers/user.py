@@ -4,6 +4,7 @@ from typing import Optional, List
 from app.services.user_service import UserService
 from app.services.follow_service import FollowService
 from app.core.auth_dependencies import get_current_user
+from app.core.cache import cache
 
 router = APIRouter()
 user_service = UserService()
@@ -41,6 +42,7 @@ async def register_user(request: UserRegisterRequest):
 
 
 @router.get("/users/{user_id}")
+@cache(expire_seconds=300)
 async def get_user(user_id: str):
     """
     Kullanıcı profilini getirir.
@@ -96,6 +98,7 @@ async def update_user(user_id: str, request: UserUpdateRequest):
 
 
 @router.get("/users/{user_id}/statistics")
+@cache(expire_seconds=300)
 async def get_user_statistics(user_id: str):
     """
     Kullanıcı istatistiklerini getirir.
@@ -134,6 +137,7 @@ async def unfollow_user(user_id: str, follower_id: str = Query(...)):
 
 
 @router.get("/users/{user_id}/followers")
+@cache(expire_seconds=300)
 async def get_followers(user_id: str):
     """
     Kullanıcının takipçilerini getirir.
@@ -146,6 +150,7 @@ async def get_followers(user_id: str):
 
 
 @router.get("/users/{user_id}/following")
+@cache(expire_seconds=300)
 async def get_following(user_id: str):
     """
     Kullanıcının takip ettiklerini getirir.
@@ -158,6 +163,7 @@ async def get_following(user_id: str):
 
 
 @router.get("/user/{user_id}/level")
+@cache(expire_seconds=300)
 async def get_user_level(user_id: str):
     """
     Kullanıcı seviyesini getirir.
@@ -170,6 +176,7 @@ async def get_user_level(user_id: str):
 
 
 @router.get("/user/{user_id}/xp")
+@cache(expire_seconds=300)
 async def get_user_xp(user_id: str):
     """
     Kullanıcı XP bilgisini getirir.
@@ -198,6 +205,7 @@ async def add_xp(user_id: str, xp_amount: int):
 
 
 @router.get("/user/{user_id}/streak")
+@cache(expire_seconds=300)
 async def get_streak(user_id: str):
     """
     Kullanıcının streak bilgisini getirir.

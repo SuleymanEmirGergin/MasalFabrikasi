@@ -75,10 +75,8 @@ SORUN: SQL injection ve XSS riski
 - Middleware ile merkezi hata yönetimi sağlanmış durumda.
 
 #### 9. **Caching Strategy**
-```redis
-EKSİK: Redis caching implementation
-SORUN: Performance issues in production
-```
+- ✅ Redis caching decorator (`@cache`) geliştirildi. Pydantic modelleri ve Datetime nesneleri için otomatik serileştirme desteği eklendi.
+- `Story` ve `User` endpoint'lerine uygulandı.
 
 #### 10. **Backup & Recovery**
 ```bash
