@@ -2,19 +2,17 @@ import os
 import uuid
 from pathlib import Path
 try:
-    from reportlab.lib.pagesizes import letter, A4
+    from reportlab.lib.pagesizes import A4
     from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
     from reportlab.lib.units import inch
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage, PageBreak
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Image as RLImage
     from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
-    from reportlab.pdfbase import pdfmetrics
-    from reportlab.pdfbase.ttfonts import TTFont
     REPORTLAB_AVAILABLE = True
 except ImportError:
     REPORTLAB_AVAILABLE = False
-    letter = A4 = getSampleStyleSheet = ParagraphStyle = inch = None
-    SimpleDocTemplate = Paragraph = Spacer = RLImage = PageBreak = None
-    TA_CENTER = TA_JUSTIFY = pdfmetrics = TTFont = None
+    A4 = getSampleStyleSheet = ParagraphStyle = inch = None
+    SimpleDocTemplate = Paragraph = Spacer = RLImage = None
+    TA_CENTER = TA_JUSTIFY = None
 import httpx
 try:
     from ebooklib import epub

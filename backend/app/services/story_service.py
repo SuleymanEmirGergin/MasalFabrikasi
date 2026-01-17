@@ -1,12 +1,5 @@
 import os
-import os
 from openai import AsyncOpenAI
-try:
-    from transformers import pipeline
-    TRANSFORMERS_AVAILABLE = True
-except ImportError:
-    TRANSFORMERS_AVAILABLE = False
-    pipeline = None
 from app.core.config import settings
 from app.services.tts_service import TTSService
 from app.services.search_service import SearchService
@@ -246,21 +239,6 @@ Story:"""
             return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"OpenAI API hatası: {e}")
-            return self._generate_fallback_story(prompt, "tr")
-    
-    async def _generate_with_huggingface(self, prompt: str) -> str:
-        """Hugging Face modeli ile hikâye üretir."""
-        try:
-            result = self.hf_pipeline(
-                prompt,
-                max_length=500,
-                num_return_sequences=1,
-                temperature=0.8,
-                do_sample=True
-            )
-            return result[0]['generated_text'].replace(prompt, "").strip()
-        except Exception as e:
-            print(f"Hugging Face model hatası: {e}")
             return self._generate_fallback_story(prompt, "tr")
     
     def _generate_fallback_story(self, theme: str, language: str) -> str:

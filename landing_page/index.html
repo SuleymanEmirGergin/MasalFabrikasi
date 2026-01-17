@@ -323,44 +323,7 @@
         </div>
     </footer>
 
-    <script>
-        lucide.createIcons();
-
-        async function joinWaitlist() {
-            const email = document.getElementById('waitlist-email').value;
-            const messageDiv = document.getElementById('waitlist-message');
-            const formDiv = document.getElementById('waitlist-form');
-
-            if (!email || !email.includes('@')) {
-                alert('Lütfen geçerli bir e-posta adresi giriniz.');
-                return;
-            }
-
-            try {
-                // Not: Üretime geçerken backend URL'inizi buraya yazın
-                // const API_URL = 'https://your-backend.railway.app'; 
-                const API_URL = 'https://masalfabrikasi-production.up.railway.app/api/growth/waitlist';
-
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, source: 'landing_page' })
-                });
-
-                if (response.ok) {
-                    formDiv.classList.add('hidden');
-                    messageDiv.classList.remove('hidden');
-                    messageDiv.innerText = 'Harika! Listeye başarıyla eklendiniz. Yakında görüşmek üzere.';
-                } else {
-                    const err = await response.json();
-                    alert(err.detail || 'Bir hata oluştu. Lütfen tekrar deneyin.');
-                }
-            } catch (error) {
-                console.error('Waitlist error:', error);
-                alert('Sunucuya bağlanılamadı. Lütfen internetinizi kontrol edin.');
-            }
-        }
-    </script>
+    <script src="assets/js/main.js"></script>
 </body>
 
 </html>

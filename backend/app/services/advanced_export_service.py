@@ -8,12 +8,6 @@ try:
     from docx import Document
 except ImportError:
     Document = None
-try:
-    import markdown
-    MARKDOWN_AVAILABLE = True
-except ImportError:
-    MARKDOWN_AVAILABLE = False
-    markdown = None
 
 
 class AdvancedExportService:

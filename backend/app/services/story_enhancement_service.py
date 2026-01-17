@@ -1,11 +1,11 @@
 from typing import Dict, Optional, Any
 from openai import OpenAI
 from app.core.config import settings
-from app.core.story_enhancement_config import STORY_ENHANCEMENT_CONFIG
 import json
 import uuid
 import logging
 import re
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -17,20 +17,35 @@ class StoryEnhancementService:
 
     def __init__(self):
         self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url=settings.OPENAI_BASE_URL)
+        self.config = self._load_config()
+
+    def _load_config(self) -> Dict:
+        """Loads configuration from JSON file."""
+        config_path = os.path.join("backend", "app", "core", "story_enhancement_config.json")
+        if not os.path.exists(config_path):
+            # Fallback for Docker/Deployed environment where paths might differ
+            config_path = os.path.join(os.getcwd(), "app", "core", "story_enhancement_config.json")
+
+        try:
+            with open(config_path, "r", encoding="utf-8") as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Failed to load story enhancement config: {e}")
+            return {}
 
     async def process(self, feature_key: str, story_text: str, **kwargs) -> Dict:
         """
         Process a story enhancement request.
 
         Args:
-            feature_key: The key in STORY_ENHANCEMENT_CONFIG (e.g., 'amazement-enhancer')
+            feature_key: The key in config (e.g., 'amazement-enhancer')
             story_text: The content of the story
             **kwargs: Additional arguments needed for the specific prompt (e.g., target_age, style)
         """
-        if feature_key not in STORY_ENHANCEMENT_CONFIG:
+        if feature_key not in self.config:
             raise ValueError(f"Feature '{feature_key}' is not configured.")
 
-        config = STORY_ENHANCEMENT_CONFIG[feature_key]
+        config = self.config[feature_key]
         system_role = config["system_role"]
         prompt_template = config["prompt_template"]
 
@@ -123,7 +138,12 @@ class StoryEnhancementService:
 
             # Use three quotes to handle multiline strings safely
             expression = f'f"""{prompt_template}"""'
-            prompt = eval(expression, {}, context)
+
+            # Pass common modules to context for eval
+            eval_context = context.copy()
+            eval_context['json'] = json
+
+            prompt = eval(expression, {}, eval_context)
 
         except Exception as e:
             logger.warning(f"Template evaluation failed for {feature_key}: {e}. Falling back to simple replacement.")
