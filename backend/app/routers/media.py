@@ -9,9 +9,9 @@ from app.services.media_search_service import MediaSearchService
 from app.services.audio_music_advanced_service import AudioMusicAdvancedService
 from app.services.visual_media_advanced_service import VisualMediaAdvancedService
 from app.services.story_ai_visualization_service import StoryAiVisualizationService
-from app.services.story_voice_commands_service import StoryVoiceCommandsService
 from app.services.story_vr_experience_service import StoryVrExperienceService
 from app.services.story_multimedia_format_service import StoryMultimediaFormatService
+from app.services.story_enhancement_service import StoryEnhancementService
 
 router = APIRouter()
 
@@ -22,9 +22,9 @@ media_search_service = MediaSearchService()
 audio_music_advanced_service = AudioMusicAdvancedService()
 visual_media_advanced_service = VisualMediaAdvancedService()
 story_ai_visualization_service = StoryAiVisualizationService()
-story_voice_commands_service = StoryVoiceCommandsService()
 story_vr_experience_service = StoryVrExperienceService()
 story_multimedia_format_service = StoryMultimediaFormatService()
+story_enhancement_service = StoryEnhancementService()
 
 
 # ========== Sesli Komutlar (Temel) ==========
@@ -52,8 +52,8 @@ class VoiceCommandRequest(BaseModel):
 
 @router.post("/voice/process-command")
 async def process_story_voice_command(request: VoiceCommandRequest):
-    return await story_voice_commands_service.process_voice_command(
-        request.user_id, request.audio_text, request.context
+    return await story_enhancement_service.process(
+        "voice-commands", "", audio_text=request.audio_text, context=request.context
     )
 
 

@@ -1,14 +1,14 @@
 from typing import Dict, List
 from openai import OpenAI
 from app.core.config import settings
-from app.services.story_analysis_service import StoryAnalysisService
+from app.services.story_enhancement_service import StoryEnhancementService
 import json
 
 
 class AIAnalysisAdvancedService:
     def __init__(self):
         self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url=settings.OPENAI_BASE_URL)
-        self.analysis_service = StoryAnalysisService()
+        self.enhancement_service = StoryEnhancementService()
     
     async def generate_emotion_chart_data(self, story_id: str) -> Dict:
         """Duygu analizi grafik verisi oluşturur."""
@@ -19,10 +19,9 @@ class AIAnalysisAdvancedService:
         if not story:
             raise ValueError("Hikâye bulunamadı")
         
-        analysis = await self.analysis_service.analyze_story(
-            story.get('story_text', ''),
-            story.get('language', 'tr')
-        )
+        # Analysis
+        res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+        analysis = res.get("result", {})
         
         emotions = analysis.get('emotions', {})
         emotion_scores = emotions.get('emotion_score', {})
@@ -46,10 +45,8 @@ class AIAnalysisAdvancedService:
         if not story:
             raise ValueError("Hikâye bulunamadı")
         
-        analysis = await self.analysis_service.analyze_story(
-            story.get('story_text', ''),
-            story.get('language', 'tr')
-        )
+        res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+        analysis = res.get("result", {})
         
         characters = analysis.get('characters', [])
         
@@ -78,10 +75,8 @@ class AIAnalysisAdvancedService:
         if not story:
             raise ValueError("Hikâye bulunamadı")
         
-        analysis = await self.analysis_service.analyze_story(
-            story.get('story_text', ''),
-            story.get('language', 'tr')
-        )
+        res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+        analysis = res.get("result", {})
         
         themes = analysis.get('themes', [])
         
@@ -100,10 +95,8 @@ class AIAnalysisAdvancedService:
         if not story:
             raise ValueError("Hikâye bulunamadı")
         
-        analysis = await self.analysis_service.analyze_story(
-            story.get('story_text', ''),
-            story.get('language', 'tr')
-        )
+        res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+        analysis = res.get("result", {})
         
         reading_level = analysis.get('reading_level', {})
         stats = analysis.get('statistics', {})

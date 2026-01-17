@@ -1,14 +1,14 @@
 from typing import Dict, List, Optional
 from openai import OpenAI
 from app.core.config import settings
-from app.services.story_improvement_service import StoryImprovementService
+from app.services.story_enhancement_service import StoryEnhancementService
 import json
 
 
 class AIImprovementAdvancedService:
     def __init__(self):
         self.openai_client = OpenAI(api_key=settings.OPENAI_API_KEY, base_url=settings.OPENAI_BASE_URL)
-        self.improvement_service = StoryImprovementService()
+        self.enhancement_service = StoryEnhancementService()
     
     async def get_realtime_suggestions(
         self,
@@ -70,8 +70,9 @@ JSON formatında döndür:
         improvement_type: str = "general"
     ) -> str:
         """Bölümü otomatik iyileştirir."""
-        improved = await self.improvement_service.get_improved_version(text, improvement_type, "tr")
-        return improved
+        # Using refinement feature for improvement
+        res = await self.enhancement_service.process("refinement", text)
+        return res.get("result", text)
     
     async def batch_improve(
         self,

@@ -9,7 +9,7 @@ from app.services.story_translation_advanced_service import StoryTranslationAdva
 from app.services.multilang_service import MultilangService
 from app.services.multilang_enhanced_service import MultilangEnhancedService
 from app.services.ai_editor_service import AIEditorService
-from app.services.story_ai_editor_advanced_service import StoryAiEditorAdvancedService
+from app.services.story_enhancement_service import StoryEnhancementService
 from app.services.ai_editor_enhanced_service import AIEditorEnhancedService
 from app.services.ai_assistant_service import AIAssistantService
 from app.services.ai_analysis_advanced_service import AIAnalysisAdvancedService
@@ -29,7 +29,7 @@ story_translation_advanced_service = StoryTranslationAdvancedService()
 multilang_service = MultilangService()
 multilang_enhanced_service = MultilangEnhancedService()
 ai_editor_service = AIEditorService()
-story_ai_editor_advanced_service = StoryAiEditorAdvancedService()
+story_enhancement_service = StoryEnhancementService()
 ai_editor_enhanced_service = AIEditorEnhancedService()
 ai_assistant_service = AIAssistantService()
 ai_analysis_advanced_service = AIAnalysisAdvancedService()
@@ -218,8 +218,10 @@ class EditStoryRequest(BaseModel):
 
 @router.post("/ai-editor/edit")
 async def edit_story(request: EditStoryRequest):
-    return await story_ai_editor_advanced_service.edit_story(
-        request.story_id, request.story_text, request.edit_instruction, request.edit_type
+    return await story_enhancement_service.process(
+        "ai-editor-advanced",
+        request.story_text,
+        edit_instruction=request.edit_instruction
     )
 
 
@@ -230,15 +232,19 @@ class ImproveFlowRequest(BaseModel):
 
 @router.post("/ai-editor/improve-flow")
 async def improve_flow(request: ImproveFlowRequest):
-    return await story_ai_editor_advanced_service.improve_flow(
-        request.story_id, request.story_text
+    return await story_enhancement_service.process(
+        "ai-editor-advanced",
+        request.story_text,
+        edit_instruction="Hikayenin akışını iyileştir, geçişleri yumuşat."
     )
 
 
 @router.post("/ai-editor/enhance-dialogue")
 async def enhance_dialogue(request: ImproveFlowRequest):
-    return await story_ai_editor_advanced_service.enhance_dialogue(
-        request.story_id, request.story_text
+    return await story_enhancement_service.process(
+        "ai-editor-advanced",
+        request.story_text,
+        edit_instruction="Diyalogları daha doğal ve etkileyici hale getir."
     )
 
 

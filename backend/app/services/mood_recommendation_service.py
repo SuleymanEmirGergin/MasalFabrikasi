@@ -1,6 +1,6 @@
 from typing import List, Dict, Optional
 from app.services.story_storage import StoryStorage
-from app.services.story_analysis_service import StoryAnalysisService
+from app.services.story_enhancement_service import StoryEnhancementService
 from app.services.recommendation_service import RecommendationService
 import json
 import os
@@ -11,7 +11,7 @@ from app.core.config import settings
 class MoodRecommendationService:
     def __init__(self):
         self.story_storage = StoryStorage()
-        self.analysis_service = StoryAnalysisService()
+        self.enhancement_service = StoryEnhancementService()
         self.recommendation_service = RecommendationService()
         self.user_moods_file = os.path.join(settings.STORAGE_PATH, "user_moods.json")
         self._ensure_file()
@@ -27,7 +27,9 @@ class MoodRecommendationService:
         scored = []
         
         for story in all_stories:
-            analysis = await self.analysis_service.analyze_story(story.get('story_text', ''), story.get('language', 'tr'))
+            # We use enhancement service for analysis
+            res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+            analysis = res.get("result", {})
             story_emotion = analysis.get('emotions', {}).get('primary', 'neutral')
             
             mood_match = self._calculate_mood_match(mood, story_emotion)
@@ -71,7 +73,8 @@ class MoodRecommendationService:
         scored = []
         
         for story in all_stories:
-            analysis = await self.analysis_service.analyze_story(story.get('story_text', ''), story.get('language', 'tr'))
+            res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+            analysis = res.get("result", {})
             story_emotion = analysis.get('emotions', {}).get('primary', 'neutral')
             if story_emotion.lower() in preferred_emotions:
                 scored.append({"story": story, "score": 1.0})

@@ -5,13 +5,13 @@ import uuid
 from datetime import datetime
 from app.core.config import settings
 from app.services.story_storage import StoryStorage
-from app.services.story_analysis_service import StoryAnalysisService
+from app.services.story_enhancement_service import StoryEnhancementService
 
 
 class ParentalControlService:
     def __init__(self):
         self.story_storage = StoryStorage()
-        self.analysis_service = StoryAnalysisService()
+        self.enhancement_service = StoryEnhancementService()
         self.settings_file = os.path.join(settings.STORAGE_PATH, "parental_controls.json")
         self._ensure_file()
     
@@ -138,10 +138,9 @@ class ParentalControlService:
                 }
         
         # Yaş uygunluğu kontrolü (AI analizi ile)
-        analysis = await self.analysis_service.analyze_story(
-            story.get('story_text', ''),
-            story.get('language', 'tr')
-        )
+        # Using analysis service (migrated)
+        res = await self.enhancement_service.process("analysis", story.get('story_text', ''))
+        analysis = res.get("result", {})
         
         recommended_age = analysis.get('recommended_age', '8-10')
         age_range = self._parse_age_range(recommended_age)

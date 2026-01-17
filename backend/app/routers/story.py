@@ -31,14 +31,12 @@ from app.services.translation_service import TranslationService
 from app.services.user_profile_service import UserProfileService
 from app.services.dialogue_service import DialogueService
 from app.services.character_service import CharacterService
-from app.services.story_outline_service import StoryOutlineService
 from app.services.comment_service import CommentService
 from app.services.like_service import LikeService
 from app.services.collaboration_service import CollaborationService
 from app.services.voice_acting_service import VoiceActingService
 from app.services.sound_effect_service import SoundEffectService
 from app.services.story_versioning_service import StoryVersioningService
-from app.services.story_analysis_service import StoryAnalysisService
 from app.services.recommendation_service import RecommendationService
 from app.services.music_service import MusicService
 from app.services.story_comparison_service import StoryComparisonService
@@ -46,8 +44,8 @@ from app.services.community_service import CommunityService
 from app.services.search_service import SearchService
 from app.services.analytics_service import AnalyticsService
 from app.services.story_series_service import StorySeriesService
-from app.services.story_improvement_service import StoryImprovementService
 from app.services.parental_control_service import ParentalControlService
+from app.services.story_enhancement_service import StoryEnhancementService
 from app.services.audio_recording_service import AudioRecordingService
 from app.services.sharing_service import SharingService
 from app.services.ebook_service import EbookService
@@ -97,14 +95,12 @@ translation_service = TranslationService()
 user_profile_service = UserProfileService()
 dialogue_service = DialogueService()
 character_service = CharacterService()
-story_outline_service = StoryOutlineService()
 comment_service = CommentService()
 like_service = LikeService()
 collaboration_service = CollaborationService()
 voice_acting_service = VoiceActingService()
 sound_effect_service = SoundEffectService()
 story_versioning_service = StoryVersioningService()
-story_analysis_service = StoryAnalysisService()
 recommendation_service = RecommendationService()
 music_service = MusicService()
 story_comparison_service = StoryComparisonService()
@@ -112,8 +108,8 @@ community_service = CommunityService()
 # search_service = SearchService() # Requires DB session, instantiated in endpoints
 analytics_service = AnalyticsService()
 story_series_service = StorySeriesService()
-story_improvement_service = StoryImprovementService()
 parental_control_service = ParentalControlService()
+story_enhancement_service = StoryEnhancementService()
 audio_recording_service = AudioRecordingService()
 sharing_service = SharingService()
 ebook_service = EbookService()
@@ -1020,13 +1016,13 @@ async def generate_story_outline(request: OutlineRequest):
     Tema için hikâye özeti/planı oluşturur.
     """
     try:
-        outline = await story_outline_service.generate_outline(
-            request.theme,
-            request.language,
-            request.story_type,
-            request.include_characters
+        result = await story_enhancement_service.process(
+            "outline",
+            "",
+            theme=request.theme,
+            story_type=request.story_type
         )
-        return outline
+        return result.get("result", {})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Hikâye planı oluşturulurken hata oluştu: {str(e)}")
 
@@ -1046,12 +1042,13 @@ async def get_story_outline(story_id: str):
             return story.get('outline')
         
         # Yoksa yeni outline oluştur
-        outline = await story_outline_service.generate_outline(
-            story.get('theme', ''),
-            story.get('language', 'tr'),
-            story.get('story_type', 'masal'),
-            True
+        result = await story_enhancement_service.process(
+            "outline",
+            "",
+            theme=story.get('theme', ''),
+            story_type=story.get('story_type', 'masal')
         )
+        outline = result.get("result", {})
         
         # Outline'ı hikâyeye kaydet
         story['outline'] = outline
@@ -2120,11 +2117,11 @@ async def analyze_story_quality(story_id: str):
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
         
-        analysis = await story_improvement_service.analyze_story_quality(
-            story.get('story_text', ''),
-            story.get('language', 'tr')
+        result = await story_enhancement_service.process(
+            "improvement",
+            story.get('story_text', '')
         )
-        return analysis
+        return result.get("result", {})
     except HTTPException:
         raise
     except Exception as e:
@@ -2145,15 +2142,25 @@ async def improve_story(story_id: str, request: ImproveStoryRequest):
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
         
-        improved_text = await story_improvement_service.get_improved_version(
+        feature_map = {
+            "flow": "flow-optimizer",
+            "vocabulary": "vocabulary-enhancer",
+            "structure": "structure-optimizer",
+            "description": "description-enhancer",
+            "dialogue": "dialogue-naturalness"
+        }
+
+        feature = feature_map.get(request.improvement_type, "refinement")
+
+        result = await story_enhancement_service.process(
+            feature,
             story.get('story_text', ''),
-            request.improvement_type,
-            story.get('language', 'tr')
+            enhancement_level="high"
         )
         
         return {
             "original_text": story.get('story_text', ''),
-            "improved_text": improved_text,
+            "improved_text": result.get("result", ""),
             "improvement_type": request.improvement_type
         }
     except HTTPException:

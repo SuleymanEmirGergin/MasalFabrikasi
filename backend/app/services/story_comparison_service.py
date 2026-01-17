@@ -1,13 +1,13 @@
 from typing import Dict, List
 from app.services.story_storage import StoryStorage
-from app.services.story_analysis_service import StoryAnalysisService
+from app.services.story_enhancement_service import StoryEnhancementService
 import difflib
 
 
 class StoryComparisonService:
     def __init__(self):
         self.story_storage = StoryStorage()
-        self.analysis_service = StoryAnalysisService()
+        self.enhancement_service = StoryEnhancementService()
     
     async def compare_stories(
         self,
@@ -37,8 +37,10 @@ class StoryComparisonService:
         similarity = self._calculate_text_similarity(text1, text2)
         
         # Analiz karşılaştırması
-        analysis1 = await self.analysis_service.analyze_story(text1, story1.get('language', 'tr'))
-        analysis2 = await self.analysis_service.analyze_story(text2, story2.get('language', 'tr'))
+        res1 = await self.enhancement_service.process("analysis", text1)
+        res2 = await self.enhancement_service.process("analysis", text2)
+        analysis1 = res1.get("result", {})
+        analysis2 = res2.get("result", {})
         
         # İstatistik karşılaştırması
         stats1 = analysis1.get('statistics', {})

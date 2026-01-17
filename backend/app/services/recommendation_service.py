@@ -1,6 +1,5 @@
 from typing import List, Dict, Optional
 from app.services.story_storage import StoryStorage
-from app.services.story_analysis_service import StoryAnalysisService
 from app.services.user_profile_service import UserProfileService
 import json
 import os
@@ -10,7 +9,6 @@ from app.core.config import settings
 class RecommendationService:
     def __init__(self):
         self.story_storage = StoryStorage()
-        self.analysis_service = StoryAnalysisService()
         self.user_profile_service = UserProfileService()
         self.user_preferences_file = os.path.join(settings.STORAGE_PATH, "user_preferences.json")
         self._ensure_file()
