@@ -5,6 +5,10 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, insert, delete
 
 from app.core.database import get_db
+from app.models import (
+    User, UserProfile, Story, Character, Subscription,
+    PrivacySettings, DataProcessingLog
+)
 
 class GDPRService:
     def __init__(self):
@@ -35,53 +39,61 @@ class GDPRService:
             try:
                 # Kullanıcı profili
                 user_result = await session.execute(
-                    select("*").where("id" == user_id).table("users")
+                    select(User).where(User.id == user_id)
                 )
-                user_row = user_result.fetchone()
-                if user_row:
-                    user_dict = dict(user_row)
-                    # Hassas bilgileri çıkar (şifre hash'i gibi)
-                    sensitive_fields = ["password_hash"]
-                    for field in sensitive_fields:
-                        user_dict.pop(field, None)
+                user = user_result.scalar_one_or_none()
+                if user:
+                    user_dict = user.__dict__.copy()
+                    user_dict.pop("_sa_instance_state", None)
+                    # Hassas bilgileri çıkar
+                    user_dict.pop("password_hash", None)
                     export_data["user_profile"] = user_dict
 
+                # Kullanıcı Profili (Detaylar)
+                profile_result = await session.execute(
+                    select(UserProfile).where(UserProfile.auth_user_id == user_id)
+                )
+                profile = profile_result.scalar_one_or_none()
+                if profile:
+                    profile_dict = profile.__dict__.copy()
+                    profile_dict.pop("_sa_instance_state", None)
+                    export_data["user_profile"]["details"] = profile_dict
+                    # İstatistikler profil içinde
+                    export_data["usage_statistics"] = profile.statistics
+
                 # Hikayeler
-                stories_result = await session.execute(
-                    select("*").where("user_id" == user_id).table("stories")
-                )
-                stories = stories_result.fetchall()
-                export_data["stories"] = [dict(story) for story in stories]
-
-                # Karakterler
-                characters_result = await session.execute(
-                    select("*").where("user_id" == user_id).table("characters")
-                )
-                characters = characters_result.fetchall()
-                export_data["characters"] = [dict(char) for char in characters]
-
-                # Kullanım istatistikleri (varsa)
-                try:
-                    stats_result = await session.execute(
-                        select("*").where("user_id" == user_id).table("user_statistics")
+                # user_id profile.id ile eşleşir, ancak User tablosundaki id ile auth_user_id eşleşir.
+                # Story tablosunda user_id UserProfile.id'dir.
+                # Önce UserProfile id'sini bulmalıyız.
+                if profile:
+                    stories_result = await session.execute(
+                        select(Story).where(Story.user_id == profile.id)
                     )
-                    stats = stats_result.fetchone()
-                    if stats:
-                        export_data["usage_statistics"] = dict(stats)
-                except Exception:
-                    # Tablo yoksa sessizce geç
-                    pass
+                    stories = stories_result.scalars().all()
+                    export_data["stories"] = [
+                        {k: v for k, v in s.__dict__.items() if k != "_sa_instance_state"}
+                        for s in stories
+                    ]
 
-                # Abonelik verileri (varsa)
-                try:
+                    # Karakterler (created_by ile)
+                    characters_result = await session.execute(
+                        select(Character).where(Character.created_by == profile.id)
+                    )
+                    characters = characters_result.scalars().all()
+                    export_data["characters"] = [
+                        {k: v for k, v in c.__dict__.items() if k != "_sa_instance_state"}
+                        for c in characters
+                    ]
+
+                    # Abonelik verileri
                     subscription_result = await session.execute(
-                        select("*").where("user_id" == user_id).table("subscriptions")
+                        select(Subscription).where(Subscription.user_id == profile.id)
                     )
-                    subscription = subscription_result.fetchone()
+                    subscription = subscription_result.scalar_one_or_none()
                     if subscription:
-                        export_data["subscription_data"] = dict(subscription)
-                except Exception:
-                    pass
+                        sub_dict = subscription.__dict__.copy()
+                        sub_dict.pop("_sa_instance_state", None)
+                        export_data["subscription_data"] = sub_dict
 
                 # Gizlilik ayarları
                 export_data["privacy_settings"] = await self.get_privacy_settings(user_id)
@@ -102,49 +114,55 @@ class GDPRService:
         """
         async with get_db() as session:
             try:
-                # 1. Hikayeleri sil (veya anonimleştir)
-                await session.execute(
-                    delete("stories").where("user_id" == user_id)
+                # UserProfile id bul
+                profile_result = await session.execute(
+                    select(UserProfile).where(UserProfile.auth_user_id == user_id)
                 )
+                profile = profile_result.scalar_one_or_none()
 
-                # 2. Karakterleri sil
-                await session.execute(
-                    delete("characters").where("user_id" == user_id)
-                )
+                if profile:
+                    profile_id = profile.id
 
-                # 3. İstatistikleri sil
-                try:
+                    # 1. Hikayeleri sil
                     await session.execute(
-                        delete("user_statistics").where("user_id" == user_id)
+                        delete(Story).where(Story.user_id == profile_id)
                     )
-                except Exception:
-                    pass
 
-                # 4. Abonelikleri iptal et (silme yerine)
-                try:
+                    # 2. Karakterleri sil
                     await session.execute(
-                        update("subscriptions").where("user_id" == user_id).values(
+                        delete(Character).where(Character.created_by == profile_id)
+                    )
+
+                    # 4. Abonelikleri iptal et
+                    await session.execute(
+                        update(Subscription).where(Subscription.user_id == profile_id).values(
                             status="cancelled",
                             cancelled_at=datetime.utcnow(),
                             updated_at=datetime.utcnow()
                         )
                     )
-                except Exception:
-                    pass
 
-                # 5. Kullanıcıyı anonimleştir (tam silme yerine)
-                # GDPR için verileri anonimleştirmek daha iyidir
+                # 5. Kullanıcıyı anonimleştir
                 await session.execute(
-                    update("users").where("id" == user_id).values(
+                    update(User).where(User.id == user_id).values(
                         email=f"deleted_{user_id}@anonymous.local",
                         name="Anonymous User",
                         password_hash="",
                         email_verified=False,
                         is_active=False,
-                        deleted_at=datetime.utcnow(),
+                        # deleted_at yok, updated_at kullan
                         updated_at=datetime.utcnow()
                     )
                 )
+
+                if profile:
+                    await session.execute(
+                        update(UserProfile).where(UserProfile.id == profile.id).values(
+                            is_active=False,
+                            is_banned=True, # Pasif yapmak için
+                            updated_at=datetime.utcnow()
+                        )
+                    )
 
                 await session.commit()
 
@@ -165,14 +183,15 @@ class GDPRService:
         async with get_db() as session:
             try:
                 result = await session.execute(
-                    select("*").where("user_id" == user_id).table("privacy_settings")
+                    select(PrivacySettings).where(PrivacySettings.user_id == user_id)
                 )
-                settings = result.fetchone()
+                settings = result.scalar_one_or_none()
 
                 if settings:
-                    return dict(settings)
+                    settings_dict = settings.__dict__.copy()
+                    settings_dict.pop("_sa_instance_state", None)
+                    return settings_dict
                 else:
-                    # Varsayılan ayarlar
                     return {
                         "analytics_consent": True,
                         "marketing_emails": False,
@@ -182,7 +201,6 @@ class GDPRService:
                         "updated_at": datetime.utcnow().isoformat()
                     }
             except Exception:
-                # Tablo yoksa varsayılan ayarları döndür
                 return {
                     "analytics_consent": True,
                     "marketing_emails": False,
@@ -190,32 +208,30 @@ class GDPRService:
                     "profile_visibility": "private"
                 }
 
-    async def update_privacy_settings(self, user_id: str, settings: Dict[str, Any]):
+    async def update_privacy_settings(self, user_id: str, settings_data: Dict[str, Any]):
         """
         Kullanıcının gizlilik ayarlarını günceller.
         """
         async with get_db() as session:
             try:
-                settings["updated_at"] = datetime.utcnow()
+                settings_data["updated_at"] = datetime.utcnow()
 
-                # Önce mevcut ayarları kontrol et
                 existing = await session.execute(
-                    select("id").where("user_id" == user_id).table("privacy_settings")
+                    select(PrivacySettings).where(PrivacySettings.user_id == user_id)
                 )
-                exists = existing.fetchone()
+                existing_settings = existing.scalar_one_or_none()
 
-                if exists:
-                    # Güncelle
+                if existing_settings:
                     await session.execute(
-                        update("privacy_settings").where("user_id" == user_id).values(settings)
+                        update(PrivacySettings).where(PrivacySettings.user_id == user_id).values(**settings_data)
                     )
                 else:
-                    # Yeni oluştur
-                    settings["user_id"] = user_id
-                    settings["created_at"] = datetime.utcnow()
-                    await session.execute(
-                        insert("privacy_settings").values(settings)
+                    new_settings = PrivacySettings(
+                        user_id=user_id,
+                        **settings_data,
+                        created_at=datetime.utcnow()
                     )
+                    session.add(new_settings)
 
                 await session.commit()
 
@@ -230,16 +246,17 @@ class GDPRService:
         async with get_db() as session:
             try:
                 result = await session.execute(
-                    select("*").where("user_id" == user_id)
-                    .order_by("created_at DESC")
+                    select(DataProcessingLog).where(DataProcessingLog.user_id == user_id)
+                    .order_by(DataProcessingLog.created_at.desc())
                     .limit(limit)
                     .offset(offset)
-                    .table("data_processing_log")
                 )
-                logs = result.fetchall()
-                return [dict(log) for log in logs]
+                logs = result.scalars().all()
+                return [
+                    {k: v for k, v in log.__dict__.items() if k != "_sa_instance_state"}
+                    for log in logs
+                ]
             except Exception:
-                # Tablo yoksa boş liste döndür
                 return []
 
     async def log_data_export(self, user_id: str, export_type: str):
@@ -248,18 +265,15 @@ class GDPRService:
         """
         async with get_db() as session:
             try:
-                log_entry = {
-                    "user_id": user_id,
-                    "action": "data_export",
-                    "details": json.dumps({"export_type": export_type}),
-                    "created_at": datetime.utcnow()
-                }
-                await session.execute(
-                    insert("data_processing_log").values(log_entry)
+                log_entry = DataProcessingLog(
+                    user_id=user_id,
+                    action="data_export",
+                    details={"export_type": export_type},
+                    created_at=datetime.utcnow()
                 )
+                session.add(log_entry)
                 await session.commit()
             except Exception:
-                # Tablo yoksa sessizce geç
                 pass
 
     async def log_data_deletion(self, user_id: str, reason: str):
@@ -268,15 +282,13 @@ class GDPRService:
         """
         async with get_db() as session:
             try:
-                log_entry = {
-                    "user_id": user_id,
-                    "action": "data_deletion",
-                    "details": json.dumps({"reason": reason}),
-                    "created_at": datetime.utcnow()
-                }
-                await session.execute(
-                    insert("data_processing_log").values(log_entry)
+                log_entry = DataProcessingLog(
+                    user_id=user_id,
+                    action="data_deletion",
+                    details={"reason": reason},
+                    created_at=datetime.utcnow()
                 )
+                session.add(log_entry)
                 await session.commit()
             except Exception:
                 pass
@@ -299,15 +311,13 @@ class GDPRService:
         # Consent geri çekme işlemini logla
         async with get_db() as session:
             try:
-                log_entry = {
-                    "user_id": user_id,
-                    "action": "consent_withdrawal",
-                    "details": json.dumps({"consent_type": consent_type}),
-                    "created_at": datetime.utcnow()
-                }
-                await session.execute(
-                    insert("data_processing_log").values(log_entry)
+                log_entry = DataProcessingLog(
+                    user_id=user_id,
+                    action="consent_withdrawal",
+                    details={"consent_type": consent_type},
+                    created_at=datetime.utcnow()
                 )
+                session.add(log_entry)
                 await session.commit()
             except Exception:
                 pass
