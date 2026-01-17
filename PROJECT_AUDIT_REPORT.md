@@ -64,10 +64,8 @@ EKSİK: Production monitoring setup
 ### 🟡 ORTA ÖNCELİKLİ
 
 #### 6. **API Rate Limiting**
-```python
-MEVCUT: Temel rate limiting
-EKSİK: Authentication endpoint'leri için özel limitler
-```
+- ✅ `slowapi` kullanılarak kritik Auth endpoint'leri (`/login`, `/register`, `/password-reset`) için rate limiting implemente edildi.
+- Login: 10/minute, Register: 5/minute, Password Reset: 3/minute.
 
 #### 7. **Input Validation**
 ```python
@@ -76,10 +74,8 @@ SORUN: SQL injection ve XSS riski
 ```
 
 #### 8. **Error Handling**
-```python
-EKSİK: Structured error responses
-SORUN: Kullanıcı dostu hata mesajları yok
-```
+- ✅ `app/core/exception_handlers.py` mevcut ve structured error response döndürüyor.
+- Middleware ile merkezi hata yönetimi sağlanmış durumda.
 
 #### 9. **Caching Strategy**
 ```redis
@@ -159,12 +155,12 @@ SORUN: Data loss risk in production
 - [x] Authentication tabloları için migration'lar
 - [x] Basic authentication testleri
 - [x] GDPR testleri
-- [ ] Environment variables dokümantasyonu
+- [x] Environment variables dokümantasyonu
 
 ### Kısa Vadeli (1-2 hafta)
 - [x] CI/CD pipeline kurulumu
 - [ ] Test coverage %50'ye çıkarma
-- [ ] Error handling iyileştirme
+- [x] Error handling iyileştirme (Mevcut)
 - [ ] API documentation güncelleme
 
 ### Orta Vadeli (1 ay)

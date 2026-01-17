@@ -1,4 +1,4 @@
-from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, Depends, BackgroundTasks, Request
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from pydantic import BaseModel, EmailStr
 from typing import Optional
@@ -10,6 +10,7 @@ from email.mime.multipart import MIMEMultipart
 
 from app.services.auth_service import AuthService
 from app.core.config import settings
+from app.core.rate_limiter import limiter
 
 router = APIRouter()
 auth_service = AuthService()
@@ -47,16 +48,19 @@ class RefreshTokenRequest(BaseModel):
     refresh_token: str
 
 @router.post("/register", response_model=TokenResponse)
-async def register_user(request: UserRegisterRequest, background_tasks: BackgroundTasks):
+@limiter.limit("5/minute")
+async def register_user(request: Request, user_request: UserRegisterRequest, background_tasks: BackgroundTasks):
     """
     Yeni kullanıcı kaydı oluşturur ve email doğrulama gönderir.
     """
+    # Map user_request fields back to variables used in logic
+    request_data = user_request
     try:
         # Kullanıcıyı oluştur
         user = await auth_service.register_user(
-            email=request.email,
-            password=request.password,
-            name=request.name
+            email=request_data.email,
+            password=request_data.password,
+            name=request_data.name
         )
 
         # Email doğrulama token'ı oluştur
@@ -66,7 +70,7 @@ async def register_user(request: UserRegisterRequest, background_tasks: Backgrou
         # Email doğrulama maili gönder (background task)
         background_tasks.add_task(
             send_verification_email,
-            request.email,
+            request_data.email,
             verification_token
         )
 
@@ -88,12 +92,13 @@ async def register_user(request: UserRegisterRequest, background_tasks: Backgrou
         raise HTTPException(status_code=500, detail=f"Kayıt sırasında hata oluştu: {str(e)}")
 
 @router.post("/login", response_model=TokenResponse)
-async def login_user(request: UserLoginRequest):
+@limiter.limit("10/minute")
+async def login_user(request: Request, login_request: UserLoginRequest):
     """
     Kullanıcı girişi yapar.
     """
     try:
-        user = await auth_service.authenticate_user(request.email, request.password)
+        user = await auth_service.authenticate_user(login_request.email, login_request.password)
         if not user:
             raise HTTPException(status_code=401, detail="Geçersiz email veya şifre")
 
@@ -148,13 +153,14 @@ async def refresh_access_token(request: RefreshTokenRequest):
         raise HTTPException(status_code=500, detail=f"Token yenileme sırasında hata oluştu: {str(e)}")
 
 @router.post("/password-reset")
-async def request_password_reset(request: PasswordResetRequest, background_tasks: BackgroundTasks):
+@limiter.limit("3/minute")
+async def request_password_reset(request: Request, reset_request: PasswordResetRequest, background_tasks: BackgroundTasks):
     """
     Şifre sıfırlama maili gönderir.
     """
     try:
         # Kullanıcıyı bul (email var mı kontrol et)
-        user = await auth_service.get_user_by_email(request.email)
+        user = await auth_service.get_user_by_email(reset_request.email)
         if user:
             # Reset token oluştur
             reset_token = secrets.token_urlsafe(32)
@@ -163,7 +169,7 @@ async def request_password_reset(request: PasswordResetRequest, background_tasks
             # Reset maili gönder
             background_tasks.add_task(
                 send_password_reset_email,
-                request.email,
+                reset_request.email,
                 reset_token
             )
 
