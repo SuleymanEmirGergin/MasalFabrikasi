@@ -40,6 +40,7 @@ from app.core.exception_handlers import (
 from app.core.sentry_config import init_sentry
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
+from prometheus_fastapi_instrumentator import Instrumentator
 
 # Initialize Sentry
 init_sentry()
@@ -115,6 +116,9 @@ app.add_exception_handler(MasalFabrikasiException, masalfabrikasi_exception_hand
 app.add_exception_handler(RequestValidationError, validation_exception_handler)
 app.add_exception_handler(StarletteHTTPException, http_exception_handler)
 app.add_exception_handler(Exception, generic_exception_handler)
+
+# Instrument Prometheus
+Instrumentator().instrument(app).expose(app)
 
 # Add Request Tracking Middleware
 app.add_middleware(RequestTrackingMiddleware)
