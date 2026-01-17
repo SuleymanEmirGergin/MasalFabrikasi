@@ -81,22 +81,24 @@ class TestTokenCreation:
     def setup_method(self):
         self.auth_service = AuthService()
     
-    def test_create_access_token(self):
+    @pytest.mark.asyncio
+    async def test_create_access_token(self):
         """Test access token creation."""
         data = {"sub": "test_user_id"}
         
-        token = self.auth_service.create_access_token(data)
+        token = await self.auth_service.create_access_token(data)
         
         assert token is not None
         assert isinstance(token, str)
         assert len(token) > 0
     
-    def test_create_access_token_with_expiry(self):
+    @pytest.mark.asyncio
+    async def test_create_access_token_with_expiry(self):
         """Test access token with custom expiry."""
         data = {"sub": "test_user_id"}
         expires_delta = timedelta(hours=1)
         
-        token = self.auth_service.create_access_token(data, expires_delta)
+        token = await self.auth_service.create_access_token(data, expires_delta)
         
         # Decode and verify expiry
         decoded = jwt.decode(
@@ -109,11 +111,12 @@ class TestTokenCreation:
         assert "sub" in decoded
         assert decoded["sub"] == "test_user_id"
     
-    def test_create_refresh_token(self):
+    @pytest.mark.asyncio
+    async def test_create_refresh_token(self):
         """Test refresh token creation."""
         user_id = "test_user_id"
         
-        token = self.auth_service.create_refresh_token(user_id)
+        token = await self.auth_service.create_refresh_token(user_id)
         
         assert token is not None
         assert isinstance(token, str)
@@ -126,62 +129,68 @@ class TestTokenVerification:
     def setup_method(self):
         self.auth_service = AuthService()
     
-    def test_verify_token_valid(self):
+    @pytest.mark.asyncio
+    async def test_verify_token_valid(self):
         """Test verification of a valid token."""
         user_id = "test_user_id"
-        token = self.auth_service.create_access_token({"sub": user_id})
+        token = await self.auth_service.create_access_token({"sub": user_id})
         
-        result = self.auth_service.verify_token(token)
+        result = await self.auth_service.verify_token(token)
         
         assert result == user_id
     
-    def test_verify_token_expired(self):
+    @pytest.mark.asyncio
+    async def test_verify_token_expired(self):
         """Test verification of an expired token."""
         user_id = "test_user_id"
         # Create token that expires immediately
-        token = self.auth_service.create_access_token(
+        token = await self.auth_service.create_access_token(
             {"sub": user_id}, 
             expires_delta=timedelta(seconds=-1)
         )
         
-        result = self.auth_service.verify_token(token)
+        result = await self.auth_service.verify_token(token)
         
         assert result is None
     
-    def test_verify_token_invalid(self):
+    @pytest.mark.asyncio
+    async def test_verify_token_invalid(self):
         """Test verification of an invalid token."""
         invalid_token = "invalid.token.here"
         
-        result = self.auth_service.verify_token(invalid_token)
+        result = await self.auth_service.verify_token(invalid_token)
         
         assert result is None
     
-    def test_verify_token_tampered(self):
+    @pytest.mark.asyncio
+    async def test_verify_token_tampered(self):
         """Test verification of a tampered token."""
         user_id = "test_user_id"
-        token = self.auth_service.create_access_token({"sub": user_id})
+        token = await self.auth_service.create_access_token({"sub": user_id})
         
         # Tamper with the token
         tampered_token = token[:-5] + "xxxxx"
         
-        result = self.auth_service.verify_token(tampered_token)
+        result = await self.auth_service.verify_token(tampered_token)
         
         assert result is None
     
-    def test_verify_refresh_token_valid(self):
+    @pytest.mark.asyncio
+    async def test_verify_refresh_token_valid(self):
         """Test verification of a valid refresh token."""
         user_id = "test_user_id"
-        refresh_token = self.auth_service.create_refresh_token(user_id)
+        refresh_token = await self.auth_service.create_refresh_token(user_id)
         
-        result = self.auth_service.verify_refresh_token(refresh_token)
+        result = await self.auth_service.verify_refresh_token(refresh_token)
         
         assert result == user_id
     
-    def test_verify_refresh_token_invalid(self):
+    @pytest.mark.asyncio
+    async def test_verify_refresh_token_invalid(self):
         """Test verification of an invalid refresh token."""
-        result = self.auth_service.verify_refresh_token("invalid_token")
-        
-        assert result is None
+        # verify_refresh_token raises ValueError for invalid tokens
+        with pytest.raises(ValueError):
+             await self.auth_service.verify_refresh_token("invalid_token")
 
 
 class TestUserAuthentication:
@@ -197,22 +206,33 @@ class TestUserAuthentication:
         password = "secure_password_123"
         hashed_password = self.auth_service.hash_password(password)
         
-        # Mock user from database
-        mock_user = MagicMock()
-        mock_user.password_hash = hashed_password
-        mock_user.email = email
-        mock_user.id = "user_123"
+        # Mock user from database - MUST be a dictionary now as per AuthService implementation
+        # Or an object that behaves like one if the service converts it
+        # AuthService implementation:
+        # result = await session.execute(select(User).where(User.email == email))
+        # user = result.scalar_one_or_none()
+        # if user: user_dict = user.__dict__.copy() ... return user_dict
+
+        # In authenticate_user:
+        # user = await self.get_user_by_email(email) -> returns dict
+        # if not self.verify_password(password, user["password_hash"]):
+
+        mock_user_dict = {
+            "id": "user_123",
+            "email": email,
+            "password_hash": hashed_password
+        }
         
         with patch.object(
             self.auth_service, 
             'get_user_by_email', 
             new_callable=AsyncMock,
-            return_value=mock_user
+            return_value=mock_user_dict
         ):
             result = await self.auth_service.authenticate_user(email, password)
             
             assert result is not None
-            assert result.email == email
+            assert result["email"] == email
     
     @pytest.mark.asyncio
     async def test_authenticate_user_wrong_password(self):
@@ -222,14 +242,17 @@ class TestUserAuthentication:
         wrong_password = "wrong_password"
         hashed_password = self.auth_service.hash_password(password)
         
-        mock_user = MagicMock()
-        mock_user.password_hash = hashed_password
+        mock_user_dict = {
+            "id": "user_123",
+            "email": email,
+            "password_hash": hashed_password
+        }
         
         with patch.object(
             self.auth_service, 
             'get_user_by_email', 
             new_callable=AsyncMock,
-            return_value=mock_user
+            return_value=mock_user_dict
         ):
             result = await self.auth_service.authenticate_user(email, wrong_password)
             
@@ -258,12 +281,13 @@ class TestTokenBlacklisting:
     def setup_method(self):
         self.auth_service = AuthService()
     
-    def test_blacklist_token(self):
+    @pytest.mark.asyncio
+    async def test_blacklist_token(self):
         """Test adding token to blacklist."""
-        token = self.auth_service.create_access_token({"sub": "user_123"})
+        token = await self.auth_service.create_access_token({"sub": "user_123"})
         
         # Should not raise any exception
-        self.auth_service.blacklist_token(token)
+        await self.auth_service.blacklist_token(token)
 
 
 class TestEdgeCases:
@@ -292,11 +316,12 @@ class TestEdgeCases:
         assert hashed is not None
         assert self.auth_service.verify_password(unicode_password, hashed)
     
-    def test_create_token_with_special_chars_in_user_id(self):
+    @pytest.mark.asyncio
+    async def test_create_token_with_special_chars_in_user_id(self):
         """Test token creation with special characters in user ID."""
         user_id = "user@example.com/special:chars"
-        token = self.auth_service.create_access_token({"sub": user_id})
+        token = await self.auth_service.create_access_token({"sub": user_id})
         
-        result = self.auth_service.verify_token(token)
+        result = await self.auth_service.verify_token(token)
         
         assert result == user_id
