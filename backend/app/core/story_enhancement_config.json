@@ -1,0 +1,62 @@
+{
+  "joy": {
+    "system_role": "Sen bir neşe ve mutluluk uzmanısın.",
+    "prompt_template": "Aşağıdaki hikayeyi daha neşeli, umut dolu ve pozitif bir hale getir. Karakterlerin mutluluğunu vurgula.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.7
+  },
+  "irony": {
+    "system_role": "Sen bir ironi ve hiciv ustasısın.",
+    "prompt_template": "Aşağıdaki hikayeye ironik bir ton kat. Olayların beklenmedik ve çelişkili yönlerini vurgula, hafif alaycı bir dil kullan.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.8
+  },
+  "horror": {
+    "system_role": "Sen bir korku hikayesi yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeyi ürkütücü ve gerilim dolu bir hale getir. Atmosferi karanlıklaştır ve okuyucuyu tedirgin et.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.7
+  },
+  "sci_fi": {
+    "system_role": "Sen bir bilim kurgu yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeyi fütüristik bir evrene taşı. Teknolojik ögeler, uzay yolculuğu veya yapay zeka gibi temalar ekle.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.8
+  },
+  "fantasy": {
+    "system_role": "Sen bir fantastik kurgu yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeye büyülü ve fantastik ögeler ekle. Ejderhalar, büyücüler veya gizemli dünyalar yarat.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.9
+  },
+  "mystery": {
+    "system_role": "Sen bir gizem ve polisiye yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeye gizemli bir hava kat. Çözülmesi gereken bir sır veya olay örgüsü ekle.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.7
+  },
+  "adventure": {
+    "system_role": "Sen bir macera romanı yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeyi aksiyon dolu bir maceraya dönüştür. Karakterleri zorlu yolculuklara çıkar.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.8
+  },
+  "romance": {
+    "system_role": "Sen bir aşk romanı yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeye romantik bir boyut ekle. Karakterler arasındaki duygusal bağları ve aşkı ön plana çıkar.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.7
+  },
+  "comedy": {
+    "system_role": "Sen bir komedi yazarısın.",
+    "prompt_template": "Aşağıdaki hikayeyi komik ve eğlenceli hale getir. Mizahi diyaloglar ve absürt durumlar ekle.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.9
+  },
+  "drama": {
+    "system_role": "Sen bir drama yazarısın.",
+    "prompt_template": "Aşağıdaki hikayenin duygusal derinliğini artır. Karakterlerin içsel çatışmalarını ve trajedilerini vurgula.\n\nHikaye:\n{text}",
+    "model": "gpt-4",
+    "temperature": 0.7
+  }
+}
