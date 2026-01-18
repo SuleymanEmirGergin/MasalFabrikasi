@@ -5,7 +5,8 @@ from app.services.stripe_service import stripe_service
 from app.repositories.user_repository import UserRepository
 from app.core.database import get_db
 from sqlalchemy.orm import Session
-from app.models import Purchase, Subscription, UserProfile
+from app.models import Purchase, Subscription, UserProfile, ProcessedStripeEvent
+from app.core.business_metrics import stripe_webhooks_total, stripe_webhook_failures_total
 from datetime import datetime, timedelta
 import logging
 
@@ -59,31 +60,57 @@ async def stripe_webhook(
     """
     Handle Stripe webhooks for payment confirmations.
     """
+    # Read payload first (awaitable)
     payload = await request.body()
     
+    # Process webhook
+    return await process_webhook_async(payload, stripe_signature, db)
+
+async def process_webhook_async(payload, stripe_signature, db):
     # Verify webhook
     event = stripe_service.verify_webhook(payload, stripe_signature)
     if not event:
         raise HTTPException(status_code=400, detail="Invalid signature")
     
+    event_id = event["id"]
+
+    # Idempotency check
+    existing_event = db.query(ProcessedStripeEvent).filter(ProcessedStripeEvent.event_id == event_id).first()
+    if existing_event:
+        logger.info(f"Event {event_id} already processed. Skipping.")
+        stripe_webhooks_total.labels(event_type=event["type"], status="skipped").inc()
+        return {"status": "skipped", "reason": "already processed"}
+
     event_type = event["type"]
     data = event["data"]["object"]
     
-    logger.info(f"Received Stripe webhook: {event_type}")
+    logger.info(f"Received Stripe webhook: {event_type} (ID: {event_id})")
     
-    # Handle payment_intent.succeeded
-    if event_type == "payment_intent.succeeded":
-        await handle_payment_success(data, db)
-    
-    # Handle subscription events
-    elif event_type == "customer.subscription.created":
-        await handle_subscription_created(data, db)
-    
-    elif event_type == "customer.subscription.updated":
-        await handle_subscription_updated(data, db)
-    
-    elif event_type == "customer.subscription.deleted":
-        await handle_subscription_cancelled(data, db)
+    try:
+        # Handle payment_intent.succeeded
+        if event_type == "payment_intent.succeeded":
+            await handle_payment_success(data, db)
+
+        # Handle subscription events
+        elif event_type == "customer.subscription.created":
+            await handle_subscription_created(data, db)
+
+        elif event_type == "customer.subscription.updated":
+            await handle_subscription_updated(data, db)
+
+        elif event_type == "customer.subscription.deleted":
+            await handle_subscription_cancelled(data, db)
+
+        # Record processed event
+        processed_event = ProcessedStripeEvent(event_id=event_id)
+        db.add(processed_event)
+        db.commit()
+        stripe_webhooks_total.labels(event_type=event_type, status="processed").inc()
+
+    except Exception as e:
+        logger.error(f"Error processing webhook {event_id}: {e}")
+        stripe_webhook_failures_total.labels(event_type=event_type).inc()
+        raise HTTPException(status_code=500, detail="Internal server error")
     
     return {"status": "success"}
 

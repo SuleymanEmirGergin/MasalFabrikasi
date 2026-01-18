@@ -54,7 +54,8 @@ class StripeService:
     def create_payment_intent(
         product_id: str,
         user_id: str,
-        metadata: Optional[Dict] = None
+        metadata: Optional[Dict] = None,
+        idempotency_key: Optional[str] = None
     ) -> Dict:
         """
         Create a Stripe Payment Intent for one-time purchases.
@@ -63,6 +64,7 @@ class StripeService:
             product_id: Product ID (e.g., 'credits_100')
             user_id: User ID for tracking
             metadata: Additional metadata
+            idempotency_key: Key for idempotency
             
         Returns:
             Payment Intent details
@@ -83,7 +85,8 @@ class StripeService:
                     "credits": product["credits"],
                     **(metadata or {})
                 },
-                description=f"{product['name']} - User {user_id}"
+                description=f"{product['name']} - User {user_id}",
+                idempotency_key=idempotency_key
             )
             
             logger.info(f"Created payment intent: {intent.id} for user {user_id}")
@@ -103,7 +106,8 @@ class StripeService:
     def create_subscription(
         product_id: str,
         user_id: str,
-        payment_method_id: str
+        payment_method_id: str,
+        idempotency_key: Optional[str] = None
     ) -> Dict:
         """
         Create a Stripe Subscription for premium access.
@@ -112,6 +116,7 @@ class StripeService:
             product_id: Subscription product ID
             user_id: User ID
             payment_method_id: Payment method from frontend
+            idempotency_key: Key for idempotency
             
         Returns:
             Subscription details
@@ -154,7 +159,8 @@ class StripeService:
                 metadata={
                     "user_id": user_id,
                     "product_id": product_id
-                }
+                },
+                idempotency_key=idempotency_key
             )
             
             logger.info(f"Created subscription: {subscription.id} for user {user_id}")

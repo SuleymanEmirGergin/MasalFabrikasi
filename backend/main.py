@@ -54,7 +54,7 @@ logger = setup_logging(
 load_dotenv()
 
 # Validate environment on startup
-from app.core.env_validator import validate_environment
+from app.core.env_validation import validate_environment
 validate_environment()
 
 @asynccontextmanager

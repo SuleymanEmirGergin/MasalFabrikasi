@@ -11,6 +11,10 @@ import json
 from app.core.database import AsyncSessionLocal
 from app.models import User, PasswordResetToken, EmailVerificationToken
 from app.core.config import settings
+from app.core.business_metrics import auth_failures_total, auth_tokens_created_total, auth_tokens_consumed_total
+import logging
+
+logger = logging.getLogger(__name__)
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
 
@@ -34,8 +38,8 @@ class AuthService:
                     return user_dict
                 return None
             except Exception as e:
-                print(f"Error getting user by email: {e}")
-                return None
+                logger.error(f"Error getting user by email: {e}")
+                raise
 
     async def get_user_by_id(self, user_id: str) -> Optional[Dict[str, Any]]:
         """ID'ye göre kullanıcıyı getirir."""
@@ -51,8 +55,8 @@ class AuthService:
                     return user_dict
                 return None
             except Exception as e:
-                print(f"Error getting user by id: {e}")
-                return None
+                logger.error(f"Error getting user by id: {e}")
+                raise
 
     async def register_user(self, email: str, password: str, name: Optional[str] = None) -> Dict[str, Any]:
         """Yeni kullanıcı kaydı oluşturur."""
@@ -92,9 +96,11 @@ class AuthService:
         """Kullanıcıyı email ve şifre ile doğrular."""
         user = await self.get_user_by_email(email)
         if not user:
+            auth_failures_total.labels(reason="user_not_found").inc()
             return None
 
         if not self.verify_password(password, user["password_hash"]):
+            auth_failures_total.labels(reason="invalid_password").inc()
             return None
 
         return user
@@ -108,7 +114,8 @@ class AuthService:
             expire = datetime.utcnow() + timedelta(minutes=self.access_token_expire_minutes)
 
         to_encode.update({"exp": expire, "type": "access"})
-        encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
+        # Enforce algorithm
+        encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm="HS256")
         return encoded_jwt
 
     async def create_refresh_token(self, user_id: str) -> str:
@@ -119,13 +126,14 @@ class AuthService:
             "exp": expire,
             "type": "refresh"
         }
-        encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm=self.algorithm)
+        encoded_jwt = jwt.encode(to_encode, self.secret_key, algorithm="HS256")
         return encoded_jwt
 
     async def verify_refresh_token(self, token: str) -> str:
         """Refresh token'ı doğrular ve user_id döndürür."""
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            # Enforce strict algorithm validation
+            payload = jwt.decode(token, self.secret_key, algorithms=["HS256"])
             if payload.get("type") != "refresh":
                 raise ValueError("Invalid token type")
 
@@ -142,7 +150,8 @@ class AuthService:
     async def verify_token(self, token: str) -> Optional[str]:
         """Access token'ı doğrular ve user_id döndürür."""
         try:
-            payload = jwt.decode(token, self.secret_key, algorithms=[self.algorithm])
+            # Enforce strict algorithm validation
+            payload = jwt.decode(token, self.secret_key, algorithms=["HS256"])
             user_id: str = payload.get("sub")
             if user_id is None:
                 return None
@@ -159,33 +168,55 @@ class AuthService:
         # Bu kısım geliştirilebilir
         pass
 
+    def hash_token(self, token: str) -> str:
+        """Hashes the token using SHA256."""
+        import hashlib
+        return hashlib.sha256(token.encode()).hexdigest()
+
     async def create_password_reset_token(self, user_id: str, token: str):
         """Şifre sıfırlama token'ı oluşturur."""
+        token_hash = self.hash_token(token)
         async with AsyncSessionLocal() as session:
             try:
+                # Invalidate existing active tokens for this user
+                await session.execute(
+                    update(PasswordResetToken)
+                    .where(
+                        PasswordResetToken.user_id == user_id,
+                        PasswordResetToken.consumed_at.is_(None)
+                    )
+                    .values(consumed_at=datetime.utcnow())
+                )
+
                 reset_token = PasswordResetToken(
                     user_id=user_id,
-                    token=token,
+                    token_hash=token_hash,
                     created_at=datetime.utcnow(),
                     expires_at=datetime.utcnow() + timedelta(hours=1)
                 )
                 session.add(reset_token)
                 await session.commit()
+                auth_tokens_created_total.labels(token_type="password_reset").inc()
             except Exception as e:
-                print(f"Error creating password reset token: {e}")
+                logger.error(f"Error creating password reset token: {e}")
                 raise
 
     async def reset_password_with_token(self, token: str, new_password: str) -> bool:
         """Token ile şifre sıfırlama."""
+        token_hash = self.hash_token(token)
         async with AsyncSessionLocal() as session:
             try:
                 # Token'ı doğrula ve user_id'yi al
                 result = await session.execute(
-                    select(PasswordResetToken).where(PasswordResetToken.token == token)
+                    select(PasswordResetToken).where(PasswordResetToken.token_hash == token_hash)
                 )
                 reset_record = result.scalar_one_or_none()
 
                 if not reset_record:
+                    return False
+
+                if reset_record.consumed_at is not None:
+                    # Token already consumed
                     return False
 
                 if reset_record.expires_at < datetime.utcnow():
@@ -204,44 +235,62 @@ class AuthService:
                     )
                 )
 
-                # Token'ı sil
-                await session.delete(reset_record)
+                # Mark token as consumed
+                reset_record.consumed_at = datetime.utcnow()
+                session.add(reset_record)
 
                 await session.commit()
+                auth_tokens_consumed_total.labels(token_type="password_reset").inc()
                 return True
 
             except Exception as e:
-                print(f"Error resetting password: {e}")
+                logger.error(f"Error resetting password: {e}")
                 await session.rollback()
                 return False
 
     async def create_email_verification_token(self, user_id: str, token: str):
         """Email doğrulama token'ı oluşturur."""
+        token_hash = self.hash_token(token)
         async with AsyncSessionLocal() as session:
             try:
+                # Invalidate existing tokens
+                await session.execute(
+                    update(EmailVerificationToken)
+                    .where(
+                        EmailVerificationToken.user_id == user_id,
+                        EmailVerificationToken.consumed_at.is_(None)
+                    )
+                    .values(consumed_at=datetime.utcnow())
+                )
+
                 verification_token = EmailVerificationToken(
                     user_id=user_id,
-                    token=token,
+                    token_hash=token_hash,
                     created_at=datetime.utcnow(),
                     expires_at=datetime.utcnow() + timedelta(hours=24)
                 )
                 session.add(verification_token)
                 await session.commit()
+                auth_tokens_created_total.labels(token_type="email_verification").inc()
             except Exception as e:
-                print(f"Error creating email verification token: {e}")
+                logger.error(f"Error creating email verification token: {e}")
                 raise
 
     async def verify_email_with_token(self, token: str) -> bool:
         """Token ile email doğrulaması."""
+        token_hash = self.hash_token(token)
         async with AsyncSessionLocal() as session:
             try:
                 # Token'ı doğrula
                 result = await session.execute(
-                    select(EmailVerificationToken).where(EmailVerificationToken.token == token)
+                    select(EmailVerificationToken).where(EmailVerificationToken.token_hash == token_hash)
                 )
                 verification_record = result.scalar_one_or_none()
 
                 if not verification_record:
+                    return False
+
+                if verification_record.consumed_at is not None:
                     return False
 
                 if verification_record.expires_at < datetime.utcnow():
@@ -257,14 +306,16 @@ class AuthService:
                     )
                 )
 
-                # Token'ı sil
-                await session.delete(verification_record)
+                # Mark token as consumed
+                verification_record.consumed_at = datetime.utcnow()
+                session.add(verification_record)
 
                 await session.commit()
+                auth_tokens_consumed_total.labels(token_type="email_verification").inc()
                 return True
 
             except Exception as e:
-                print(f"Error verifying email: {e}")
+                logger.error(f"Error verifying email: {e}")
                 await session.rollback()
                 return False
 

@@ -84,9 +84,10 @@ class PasswordResetToken(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    token = Column(String(255), unique=True, index=True, nullable=False)
+    token_hash = Column(String(255), unique=True, index=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
+    consumed_at = Column(DateTime(timezone=True), nullable=True)
 
     user = relationship("User")
 
@@ -100,9 +101,10 @@ class EmailVerificationToken(Base):
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
-    token = Column(String(255), unique=True, index=True, nullable=False)
+    token_hash = Column(String(255), unique=True, index=True, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     expires_at = Column(DateTime(timezone=True), nullable=False)
+    consumed_at = Column(DateTime(timezone=True), nullable=True)
 
     user = relationship("User")
 
@@ -470,3 +472,15 @@ class Waitlist(Base):
     
     def __repr__(self):
         return f"<Waitlist(email={self.email})>"
+
+
+class ProcessedStripeEvent(Base):
+    """
+    Track processed Stripe webhook events for idempotency
+    """
+    __tablename__ = "processed_stripe_events"
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    event_id = Column(String(255), unique=True, index=True, nullable=False)
+    processed_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
