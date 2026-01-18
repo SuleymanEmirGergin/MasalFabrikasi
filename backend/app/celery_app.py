@@ -1,5 +1,6 @@
 import os
 from celery import Celery
+from kombu import Queue, Exchange
 from app.core.config import settings
 
 # Redis URL for Broker and Result Backend
@@ -13,6 +14,10 @@ celery_app = Celery(
     include=["app.tasks.story_tasks"]
 )
 
+# Define Exchanges
+default_exchange = Exchange('default', type='direct')
+dlq_exchange = Exchange('dlq', type='direct')
+
 celery_app.conf.update(
     # Serialization
     task_serializer="json",
@@ -23,11 +28,19 @@ celery_app.conf.update(
     timezone="Europe/Istanbul",
     enable_utc=True,
     
-    # Task routing
+    # Queues & Routing (with Dead Letter Queue)
+    task_queues=(
+        Queue('default', default_exchange, routing_key='default'),
+        Queue('story_generation', default_exchange, routing_key='story_generation'),
+        Queue('dead_letter', dlq_exchange, routing_key='dead_letter'),
+    ),
     task_routes={
         "app.tasks.story_tasks.*": {"queue": "story_generation"},
     },
-    
+    task_default_queue='default',
+    task_default_exchange='default',
+    task_default_routing_key='default',
+
     # Reliability & Performance
     task_acks_late=True,  # ACK after task completes (prevents task loss)
     worker_prefetch_multiplier=1,  # Fetch 1 task at a time (prevents long queues)
