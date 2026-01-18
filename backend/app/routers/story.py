@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, validator
 from typing import Optional, List, Union, Dict, Any
 import uuid
 import os
@@ -147,21 +147,27 @@ offline_service = OfflineService()
 
 
 class StoryRequest(BaseModel):
-    theme: str
-    language: str = "tr"  # Türkçe varsayılan
-    story_type: str = "masal"  # Hikâye türü
-    save: bool = True  # Otomatik kaydet
-    image_style: str = "fantasy"  # Görsel stili
-    image_size: str = "1024x1024"  # Görsel boyutu
-    audio_speed: float = 1.0  # Ses hızı (0.5 - 2.0)
-    audio_slow: bool = False  # Yavaş konuşma (gTTS için)
-    use_async: bool = True  # Asenkron üretim (Job Queue)
+    theme: str = Field(..., min_length=3, max_length=500, description="Hikaye teması")
+    language: str = Field("tr", pattern="^(tr|en|de|fr|es)$")
+    story_type: str = "masal"
+    save: bool = True
+    image_style: str = "fantasy"
+    image_size: str = "1024x1024"
+    audio_speed: float = Field(1.0, ge=0.5, le=2.0)
+    audio_slow: bool = False
+    use_async: bool = True
     
     # Advanced Settings
-    creativity: float = 0.8 # 0.0 - 1.0
-    pacing: str = "medium" # slow, medium, fast
-    perspective: str = "third" # first, third
-    vocabulary: str = "normal" # simple, normal, complex
+    creativity: float = Field(0.8, ge=0.0, le=1.0)
+    pacing: str = Field("medium", pattern="^(slow|medium|fast)$")
+    perspective: str = Field("third", pattern="^(first|third)$")
+    vocabulary: str = Field("normal", pattern="^(simple|normal|complex)$")
+
+    @validator('theme')
+    def theme_must_not_be_empty(cls, v):
+        if not v.strip():
+            raise ValueError('Tema boş olamaz')
+        return v
 
 
 class JobResponse(BaseModel):

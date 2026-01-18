@@ -4,7 +4,7 @@ import json
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, update, insert, delete
 
-from app.core.database import get_db
+from app.core.database import get_db_context
 from app.models import (
     User, UserProfile, Story, Character, Subscription,
     PrivacySettings, DataProcessingLog
@@ -19,7 +19,7 @@ class GDPRService:
         Kullanıcının tüm verilerini toplar ve dışa aktarılabilir formatta döndürür.
         GDPR Article 15 compliance.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             export_data = {
                 "export_info": {
                     "user_id": user_id,
@@ -112,7 +112,7 @@ class GDPRService:
         Kullanıcının tüm verilerini anonimleştirir veya siler.
         GDPR Article 17 compliance.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 # UserProfile id bul
                 profile_result = await session.execute(
@@ -180,7 +180,7 @@ class GDPRService:
         """
         Kullanıcının gizlilik ayarlarını döndürür.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 result = await session.execute(
                     select(PrivacySettings).where(PrivacySettings.user_id == user_id)
@@ -212,7 +212,7 @@ class GDPRService:
         """
         Kullanıcının gizlilik ayarlarını günceller.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 settings_data["updated_at"] = datetime.utcnow()
 
@@ -243,7 +243,7 @@ class GDPRService:
         """
         Kullanıcının veri işleme geçmişini döndürür.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 result = await session.execute(
                     select(DataProcessingLog).where(DataProcessingLog.user_id == user_id)
@@ -263,7 +263,7 @@ class GDPRService:
         """
         Veri dışa aktarma işlemini loglar.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 log_entry = DataProcessingLog(
                     user_id=user_id,
@@ -280,7 +280,7 @@ class GDPRService:
         """
         Veri silme işlemini loglar.
         """
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 log_entry = DataProcessingLog(
                     user_id=user_id,
@@ -309,7 +309,7 @@ class GDPRService:
             await self.update_privacy_settings(user_id, {setting_key: False})
 
         # Consent geri çekme işlemini logla
-        async with get_db() as session:
+        async with get_db_context() as session:
             try:
                 log_entry = DataProcessingLog(
                     user_id=user_id,

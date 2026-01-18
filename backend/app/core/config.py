@@ -57,7 +57,7 @@ class Settings(BaseSettings):
     # Database (PostgreSQL)
     DATABASE_URL: str = os.getenv(
         "DATABASE_URL",
-        "postgresql://masal_user:masal_pass@localhost:5432/masal_fabrikasi"
+        "postgresql+asyncpg://masal_user:masal_pass@localhost:5432/masal_fabrikasi"
     )
     
     # Redis (for Celery and caching)

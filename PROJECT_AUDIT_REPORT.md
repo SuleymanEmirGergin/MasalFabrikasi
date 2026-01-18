@@ -79,10 +79,8 @@ SORUN: SQL injection ve XSS riski
 - `Story` ve `User` endpoint'lerine uygulandı.
 
 #### 10. **Backup & Recovery**
-```bash
-EKSİK: Automated database backups
-SORUN: Data loss risk in production
-```
+- ✅ `scripts/backup_db.sh` scripti oluşturuldu (Docker exec tabanlı).
+- Otomatik yedekleme ve eski yedekleri temizleme (rotasyon) özelliği eklendi.
 
 ---
 
@@ -107,7 +105,11 @@ SORUN: Data loss risk in production
 4. **Performance Monitoring**: New Relic/AppDynamics
 
 ### 🧪 Testing
-1. **Unit Tests**: Tüm services için %100 coverage
+1. **Unit Tests**:
+   - ✅ Auth Service (Tamamlandı)
+   - ✅ GDPR Service (Tamamlandı)
+   - ✅ StoryEnhancement Service (Yeni - Tamamlandı)
+   - 🟡 Payment Service (Eksik)
 2. **Integration Tests**: API endpoints testing
 3. **E2E Tests**: Critical user flows
 4. **Load Testing**: Locust scenarios
@@ -151,12 +153,14 @@ SORUN: Data loss risk in production
 - [x] Basic authentication testleri
 - [x] GDPR testleri
 - [x] Environment variables dokümantasyonu
+- [x] StoryEnhancement Service tests
 
 ### Kısa Vadeli (1-2 hafta)
 - [x] CI/CD pipeline kurulumu
 - [ ] Test coverage %50'ye çıkarma
 - [x] Error handling iyileştirme (Mevcut)
-- [ ] API documentation güncelleme
+- [x] API documentation güncelleme (Otomatik Swagger)
+- [x] Database Backup Script
 
 ### Orta Vadeli (1 ay)
 - [x] Production monitoring kurulumu
