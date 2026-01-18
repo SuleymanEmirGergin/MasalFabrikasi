@@ -75,6 +75,38 @@ class User(Base):
         return f"<User(id={self.id}, email={self.email})>"
 
 
+class PasswordResetToken(Base):
+    """
+    Password reset tokens
+    """
+    __tablename__ = "password_reset_tokens"
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    token = Column(String(255), unique=True, index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+
+    user = relationship("User")
+
+
+class EmailVerificationToken(Base):
+    """
+    Email verification tokens
+    """
+    __tablename__ = "email_verification_tokens"
+    __table_args__ = {'extend_existing': True}
+
+    id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    user_id = Column(UUID(as_uuid=True), ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
+    token = Column(String(255), unique=True, index=True, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
+    expires_at = Column(DateTime(timezone=True), nullable=False)
+
+    user = relationship("User")
+
+
 class UserProfile(Base):
     """
     User profile - Supabase auth.users'a referans yapar

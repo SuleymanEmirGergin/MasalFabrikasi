@@ -8,7 +8,7 @@ import uvicorn
 from dotenv import load_dotenv
 import os
 
-from app.routers import story, health, character, user, achievement, leaderboard, challenge, quiz, analytics, social, media, ai_tools, story_features, story_advanced_features, user_features, platform, education, market, collaboration, vision, voice_cloning, parental, shop, metrics_router
+from app.routers import story, health, character, user, achievement, leaderboard, challenge, quiz, analytics, social, media, ai_tools, story_features, story_advanced_features, user_features, platform, education, market, collaboration, vision, voice_cloning, parental, shop
 from app.routers import auth_router, gdpr_router
 from app.core.config import settings
 from app.services.cloud_storage_service import cloud_storage_service
@@ -249,8 +249,10 @@ app.include_router(value_features_router.router, prefix="/api/value", tags=["Val
 from app.routers import growth
 app.include_router(growth.router, prefix="/api/growth", tags=["Growth & Waitlist"])
 
-# Import Metrics Router
-app.include_router(metrics_router.router, tags=["Monitoring"])
+from prometheus_fastapi_instrumentator import Instrumentator
+
+# Add Prometheus Instrumentator
+Instrumentator().instrument(app).expose(app)
 
 
 @app.get("/")

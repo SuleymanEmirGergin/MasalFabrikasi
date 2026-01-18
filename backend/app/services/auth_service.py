@@ -9,7 +9,7 @@ from sqlalchemy import select, update, insert, delete
 import json
 
 from app.core.database import AsyncSessionLocal
-from app.models import User
+from app.models import User, PasswordResetToken, EmailVerificationToken
 from app.core.config import settings
 
 pwd_context = CryptContext(schemes=["pbkdf2_sha256", "bcrypt"], deprecated="auto")
@@ -23,8 +23,6 @@ class AuthService:
     async def get_user_by_email(self, email: str) -> Optional[Dict[str, Any]]:
         """Email'e göre kullanıcıyı getirir."""
         async with AsyncSessionLocal() as session:
-            # Bu kısım mevcut veritabanı şemanıza göre uyarlanmalı
-            # Örnek olarak users tablosu varsayıyorum
             try:
                 result = await session.execute(
                     select(User).where(User.email == email)
@@ -35,8 +33,8 @@ class AuthService:
                     user_dict.pop("_sa_instance_state", None)
                     return user_dict
                 return None
-            except Exception:
-                # Eğer tablo yoksa veya farklı şemadaysa None döndür
+            except Exception as e:
+                print(f"Error getting user by email: {e}")
                 return None
 
     async def get_user_by_id(self, user_id: str) -> Optional[Dict[str, Any]]:
@@ -44,41 +42,48 @@ class AuthService:
         async with AsyncSessionLocal() as session:
             try:
                 result = await session.execute(
-                    select("*").where("id" == user_id).table("users")
+                    select(User).where(User.id == user_id)
                 )
-                user = result.fetchone()
-                return dict(user) if user else None
-            except Exception:
+                user = result.scalar_one_or_none()
+                if user:
+                    user_dict = user.__dict__.copy()
+                    user_dict.pop("_sa_instance_state", None)
+                    return user_dict
+                return None
+            except Exception as e:
+                print(f"Error getting user by id: {e}")
                 return None
 
     async def register_user(self, email: str, password: str, name: Optional[str] = None) -> Dict[str, Any]:
         """Yeni kullanıcı kaydı oluşturur."""
-        async with AsyncSessionLocal() as session:
-            # Email kontrolü
-            existing_user = await self.get_user_by_email(email)
-            if existing_user:
-                raise ValueError("Bu email adresi zaten kayıtlı")
+        # Email kontrolü
+        existing_user = await self.get_user_by_email(email)
+        if existing_user:
+            raise ValueError("Bu email adresi zaten kayıtlı")
 
+        async with AsyncSessionLocal() as session:
             # Şifreyi hashle
             hashed_password = self.hash_password(password)
 
             # Kullanıcı oluştur
-            user_data = {
-                "id": uuid.uuid4(),
-                "email": email,
-                "password_hash": hashed_password,
-                "name": name,
-                "email_verified": False,
-                "created_at": datetime.utcnow(),
-                "updated_at": datetime.utcnow()
-            }
+            new_user = User(
+                email=email,
+                password_hash=hashed_password,
+                name=name,
+                email_verified=False,
+                is_active=True,
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow()
+            )
 
             try:
-                await session.execute(
-                    insert(User).values(user_data)
-                )
+                session.add(new_user)
                 await session.commit()
-                return user_data
+                await session.refresh(new_user)
+
+                user_dict = new_user.__dict__.copy()
+                user_dict.pop("_sa_instance_state", None)
+                return user_dict
             except Exception as e:
                 await session.rollback()
                 raise ValueError(f"Kullanıcı kaydı oluşturulamadı: {str(e)}")
@@ -157,22 +162,18 @@ class AuthService:
     async def create_password_reset_token(self, user_id: str, token: str):
         """Şifre sıfırlama token'ı oluşturur."""
         async with AsyncSessionLocal() as session:
-            # Token'ı kaydet (örnek implementasyon)
-            # Gerçek implementasyonda password_reset_tokens tablosu kullanılmalı
             try:
-                reset_data = {
-                    "user_id": user_id,
-                    "token": token,
-                    "created_at": datetime.utcnow(),
-                    "expires_at": datetime.utcnow() + timedelta(hours=1)
-                }
-                await session.execute(
-                    insert("password_reset_tokens").values(reset_data)
+                reset_token = PasswordResetToken(
+                    user_id=user_id,
+                    token=token,
+                    created_at=datetime.utcnow(),
+                    expires_at=datetime.utcnow() + timedelta(hours=1)
                 )
+                session.add(reset_token)
                 await session.commit()
-            except Exception:
-                # Tablo yoksa sessizce geç
-                pass
+            except Exception as e:
+                print(f"Error creating password reset token: {e}")
+                raise
 
     async def reset_password_with_token(self, token: str, new_password: str) -> bool:
         """Token ile şifre sıfırlama."""
@@ -180,37 +181,37 @@ class AuthService:
             try:
                 # Token'ı doğrula ve user_id'yi al
                 result = await session.execute(
-                    select("*").where("token" == token).table("password_reset_tokens")
+                    select(PasswordResetToken).where(PasswordResetToken.token == token)
                 )
-                reset_record = result.fetchone()
+                reset_record = result.scalar_one_or_none()
 
                 if not reset_record:
                     return False
 
-                reset_dict = dict(reset_record)
-                if reset_dict["expires_at"] < datetime.utcnow():
+                if reset_record.expires_at < datetime.utcnow():
                     return False
 
-                user_id = reset_dict["user_id"]
+                user_id = reset_record.user_id
 
                 # Şifreyi güncelle
                 hashed_password = self.hash_password(new_password)
+
+                # Update user
                 await session.execute(
-                    update("users").where("id" == user_id).values(
+                    update(User).where(User.id == user_id).values(
                         password_hash=hashed_password,
                         updated_at=datetime.utcnow()
                     )
                 )
 
                 # Token'ı sil
-                await session.execute(
-                    delete("password_reset_tokens").where("token" == token)
-                )
+                await session.delete(reset_record)
 
                 await session.commit()
                 return True
 
-            except Exception:
+            except Exception as e:
+                print(f"Error resetting password: {e}")
                 await session.rollback()
                 return False
 
@@ -218,19 +219,17 @@ class AuthService:
         """Email doğrulama token'ı oluşturur."""
         async with AsyncSessionLocal() as session:
             try:
-                verification_data = {
-                    "user_id": user_id,
-                    "token": token,
-                    "created_at": datetime.utcnow(),
-                    "expires_at": datetime.utcnow() + timedelta(hours=24)
-                }
-                await session.execute(
-                    insert("email_verification_tokens").values(verification_data)
+                verification_token = EmailVerificationToken(
+                    user_id=user_id,
+                    token=token,
+                    created_at=datetime.utcnow(),
+                    expires_at=datetime.utcnow() + timedelta(hours=24)
                 )
+                session.add(verification_token)
                 await session.commit()
-            except Exception:
-                # Tablo yoksa sessizce geç
-                pass
+            except Exception as e:
+                print(f"Error creating email verification token: {e}")
+                raise
 
     async def verify_email_with_token(self, token: str) -> bool:
         """Token ile email doğrulaması."""
@@ -238,36 +237,34 @@ class AuthService:
             try:
                 # Token'ı doğrula
                 result = await session.execute(
-                    select("*").where("token" == token).table("email_verification_tokens")
+                    select(EmailVerificationToken).where(EmailVerificationToken.token == token)
                 )
-                verification_record = result.fetchone()
+                verification_record = result.scalar_one_or_none()
 
                 if not verification_record:
                     return False
 
-                verification_dict = dict(verification_record)
-                if verification_dict["expires_at"] < datetime.utcnow():
+                if verification_record.expires_at < datetime.utcnow():
                     return False
 
-                user_id = verification_dict["user_id"]
+                user_id = verification_record.user_id
 
                 # Email'i doğrulanmış olarak işaretle
                 await session.execute(
-                    update("users").where("id" == user_id).values(
+                    update(User).where(User.id == user_id).values(
                         email_verified=True,
                         updated_at=datetime.utcnow()
                     )
                 )
 
                 # Token'ı sil
-                await session.execute(
-                    delete("email_verification_tokens").where("token" == token)
-                )
+                await session.delete(verification_record)
 
                 await session.commit()
                 return True
 
-            except Exception:
+            except Exception as e:
+                print(f"Error verifying email: {e}")
                 await session.rollback()
                 return False
 

@@ -1,93 +1,79 @@
 """
 Metrics Collection Service - Prometheus compatible metrics
 """
-from prometheus_client import Counter, Histogram, Gauge, CollectorRegistry
+from prometheus_client import Counter, Histogram, Gauge
 import time
 from functools import wraps
 from typing import Callable
 
 
-# Create registry
-registry = CollectorRegistry()
-
 # Request metrics
 http_requests_total = Counter(
     'http_requests_total',
     'Total HTTP requests',
-    ['method', 'endpoint', 'status'],
-    registry=registry
+    ['method', 'endpoint', 'status']
 )
 
 http_request_duration_seconds = Histogram(
     'http_request_duration_seconds',
     'HTTP request duration in seconds',
-    ['method', 'endpoint'],
-    registry=registry
+    ['method', 'endpoint']
 )
 
 # Story generation metrics
 story_generation_total = Counter(
     'story_generation_total',
     'Total story generations',
-    ['language', 'story_type', 'status'],
-    registry=registry
+    ['language', 'story_type', 'status']
 )
 
 story_generation_duration_seconds = Histogram(
     'story_generation_duration_seconds',
     'Story generation duration in seconds',
-    ['story_type'],
-    registry=registry
+    ['story_type']
 )
 
 # Active users
 active_users = Gauge(
     'active_users_total',
-    'Number of active users',
-    registry=registry
+    'Number of active users'
 )
 
 # Background jobs
 background_jobs_total = Counter(
     'background_jobs_total',
     'Total background jobs',
-    ['job_type', 'status'],
-    registry=registry
+    ['job_type', 'status']
 )
 
 background_jobs_duration_seconds = Histogram(
     'background_jobs_duration_seconds',
     'Background job duration in seconds',
-    ['job_type'],
-    registry=registry
+    ['job_type']
 )
 
 # Database metrics
 database_queries_total = Counter(
     'database_queries_total',
     'Total database queries',
-    ['operation'],
-    registry=registry
+    ['operation']
 )
 
 database_query_duration_seconds = Histogram(
     'database_query_duration_seconds',
     'Database query duration in seconds',
-    ['operation'],
-    registry=registry
+    ['operation']
 )
 
 # Cache metrics
 cache_hits_total = Counter(
     'cache_hits_total',
-    'Total cache hits',
-    registry=registry
+    'Total cache hits'
 )
 
 cache_misses_total = Counter(
     'cache_misses_total',
-    'Total cache misses',
-    registry=registry
+    'Total cache misses'
 )
 
 
