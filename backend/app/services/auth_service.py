@@ -144,7 +144,7 @@ class AuthService:
             return user_id
         except jwt.ExpiredSignatureError:
             raise ValueError("Token expired")
-        except jwt.JWTError:
+        except jwt.PyJWTError:
             raise ValueError("Invalid token")
 
     async def verify_token(self, token: str) -> Optional[str]:
@@ -158,7 +158,7 @@ class AuthService:
             return user_id
         except jwt.ExpiredSignatureError:
             return None
-        except jwt.JWTError:
+        except jwt.PyJWTError:
             return None
 
     async def blacklist_token(self, token: str):
