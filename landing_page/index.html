@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masal Fabrikası - AI Destekli Pedagojik Çocuk Masalları</title>
+    <meta name="description"
+        content="Çocuğunuzun kahramanı olduğu, yapay zeka destekli eğitici ve sihirli masallar dünyası. Hemen erken erişim için bekleme listesine katılın!">
+    <meta name="keywords"
+        content="masal, çocuk masalları, yapay zeka masal, eğitici masallar, uyku masalları, masal fabrikası">
+
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Masal Fabrikası - Hayaller Canlanıyor">
+    <meta property="og:description" content="Yapay zeka ile çocuğunuza özel sihirli masallar üretin.">
+    <meta property="og:image" content="https://masalfabrikasi-production.up.railway.app/static/banner.jpg">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to right, #6366f1, #d946ef);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero-bg {
+            background-color: #f3f4f6;
+            background-image: radial-gradient(#6366f1 1px, transparent 1px);
+            background-size: 32px 32px;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50 text-gray-900">
+
+    <!-- Navigation -->
+    <nav class="flex justify-between items-center py-6 px-4 md:px-12 max-w-7xl mx-auto">
+        <div class="flex items-center gap-2">
+            <i data-lucide="sparkles" class="text-indigo-600"></i>
+            <span class="text-2xl font-bold tracking-tighter">Masal Fabrikası</span>
+        </div>
+        <div class="hidden md:flex gap-8 font-medium text-gray-600">
+            <a href="#features" class="hover:text-indigo-600 transition">Özellikler</a>
+            <a href="#demo" class="hover:text-indigo-600 transition">Nasıl Çalışır?</a>
+            <a href="#reviews" class="hover:text-indigo-600 transition">Yorumlar</a>
+        </div>
+        <button
+            class="bg-indigo-600 text-white px-6 py-2 rounded-full font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-200">
+            Hemen İndir
+        </button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-bg py-20 lg:py-32 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 md:px-12 flex flex-col lg:flex-row items-center gap-12">
+            <div class="lg:w-1/2 space-y-8">
+                <div
+                    class="inline-flex items-center gap-2 px-4 py-2 bg-white rounded-full shadow-sm text-sm font-semibold text-indigo-600 border border-indigo-100">
+                    <span class="relative flex h-3 w-3">
+                        <span
+                            class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-3 w-3 bg-indigo-500"></span>
+                    </span>
+                    Yapay Zeka Destekli 2.0 Sürümü Yayında!
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold leading-tight">
+                    Çocuğunuzun <br>
+                    <span class="gradient-text">Hayalleri Canlansın</span>
+                </h1>
+                <p class="text-xl text-gray-600 leading-relaxed max-w-lg">
+                    Sadece 3 kelime ile çocuğunuza özel, eğitici ve sesli masallar üretin.
+                    Şimdi <span class="font-bold text-gray-800">Sihirli Tuval</span> ve <span
+                        class="font-bold text-gray-800">Kahramanla Sohbet</span> özellikleriyle.
+                </p>
+                <div id="waitlist-form"
+                    class="bg-white p-2 rounded-2xl shadow-xl flex flex-col sm:flex-row gap-2 border border-gray-100 max-w-md">
+                    <input id="waitlist-email" type="email" placeholder="E-posta adresiniz"
+                        class="flex-1 px-4 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <button onclick="joinWaitlist()"
+                        class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-indigo-700 transition">
+                        Erken Erişim Al
+                    </button>
+                </div>
+                <div id="waitlist-message" class="hidden text-sm font-medium text-green-600 mt-2"></div>
+
+                <div class="flex flex-wrap gap-4 mt-8">
+                    <!-- App Store Badge Placeholder -->
+                    <div
+                        class="flex items-center gap-3 px-5 py-3 bg-gray-900 text-white rounded-2xl opacity-40 cursor-not-allowed transition hover:opacity-50">
+                        <i data-lucide="apple" class="w-6 h-6"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase font-bold text-gray-400">Yakında</div>
+                            <div class="text-sm font-bold">App Store</div>
+                        </div>
+                    </div>
+                    <!-- Play Store Badge Placeholder -->
+                    <div
+                        class="flex items-center gap-3 px-5 py-3 bg-gray-900 text-white rounded-2xl opacity-40 cursor-not-allowed transition hover:opacity-50">
+                        <i data-lucide="play" class="w-6 h-6"></i>
+                        <div class="text-left">
+                            <div class="text-[10px] uppercase font-bold text-gray-400">Yakında</div>
+                            <div class="text-sm font-bold">Google Play</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4 text-sm font-medium text-gray-500 pt-4">
+                    <div class="flex -space-x-2">
+                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=1"
+                            alt="">
+                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=2"
+                            alt="">
+                        <img class="w-8 h-8 rounded-full border-2 border-white" src="https://i.pravatar.cc/100?img=3"
+                            alt="">
+                    </div>
+                    <span>10,000+ Bekleyen Aile</span>
+                </div>
+            </div>
+            <div class="lg:w-1/2 relative">
+                <div
+                    class="absolute inset-0 bg-gradient-to-tr from-indigo-500/20 to-pink-500/20 rounded-full filter blur-3xl">
+                </div>
+                <!-- Mockup Image -->
+                <div
+                    class="relative z-10 mx-auto w-80 shadow-2xl rounded-[3rem] overflow-hidden border-8 border-gray-900">
+                    <img src="assets/app_mockup.png" alt="Masal Fabrikası Mockup" class="w-full h-auto">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-24 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 md:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-20">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Size Uygun Planı Seçin</h2>
+                <p class="text-gray-600 text-lg">Ücretsiz başlayın, daha fazla sihir için yükseltin.</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+                <!-- Free Plan -->
+                <div class="bg-white p-8 rounded-3xl border border-gray-200 shadow-sm relative overflow-hidden">
+                    <h3 class="text-xl font-bold mb-2">Başlangıç</h3>
+                    <div class="text-4xl font-extrabold mb-6">$0 <span class="text-lg text-gray-400 font-normal">/
+                            ay</span></div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <i data-lucide="check" class="text-green-500 w-5 h-5"></i>
+                            Günde 1 Ücretsiz Masal
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <i data-lucide="check" class="text-green-500 w-5 h-5"></i>
+                            Standart Görsel Üretimi
+                        </li>
+                        <li class="flex items-center gap-3 text-gray-600">
+                            <i data-lucide="check" class="text-green-500 w-5 h-5"></i>
+                            Bulut Yedekleme (10 Masal)
+                        </li>
+                    </ul>
+                    <button
+                        class="w-full py-4 rounded-xl border-2 border-gray-100 font-bold text-gray-600 hover:bg-gray-50 transition">Ücretsiz
+                        Başla</button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div
+                    class="bg-indigo-600 p-8 rounded-3xl border border-indigo-500 shadow-xl relative text-white scale-105">
+                    <div
+                        class="absolute top-0 right-0 bg-pink-500 text-white px-4 py-1 rounded-bl-xl text-xs font-bold uppercase tracking-widest">
+                        En Popüler</div>
+                    <h3 class="text-xl font-bold mb-2">Premium Sihir</h3>
+                    <div class="text-4xl font-extrabold mb-6">$9.99 <span class="text-indigo-200 text-lg font-normal">/
+                            ay</span></div>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-center gap-3 text-indigo-100">
+                            <i data-lucide="sparkles" class="text-yellow-400 w-5 h-5"></i>
+                            Sınırsız Masal Üretimi
+                        </li>
+                        <li class="flex items-center gap-3 text-indigo-100">
+                            <i data-lucide="sparkles" class="text-yellow-400 w-5 h-5"></i>
+                            Ultra HD 4K Görsel Üretimi
+                        </li>
+                        <li class="flex items-center gap-3 text-indigo-100">
+                            <i data-lucide="sparkles" class="text-yellow-400 w-5 h-5"></i>
+                            Özel Seslendirme & TTS
+                        </li>
+                        <li class="flex items-center gap-3 text-indigo-100">
+                            <i data-lucide="sparkles" class="text-yellow-400 w-5 h-5"></i>
+                            Tüm Pedagojik Modlar
+                        </li>
+                    </ul>
+                    <button
+                        class="w-full py-4 rounded-xl bg-white font-bold text-indigo-600 hover:bg-indigo-50 transition">Premium'a
+                        Geç</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Grid -->
+    <section id="features" class="py-24 bg-white">
+        <div class="max-w-7xl mx-auto px-4 md:px-12">
+            <div class="text-center max-w-2xl mx-auto mb-20">
+                <h2 class="text-3xl md:text-4xl font-extrabold mb-4">Sıradan Bir Masal Değil</h2>
+                <p class="text-gray-600 text-lg">Teknoloji ve hayal gücünün en tatlı birleşimi. İşte çocuğunuzun
+                    seveceği özellikler.</p>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-12">
+                <!-- Feature 1 -->
+                <div
+                    class="group p-8 rounded-3xl bg-gray-50 hover:bg-indigo-50 transition duration-300 border border-transparent hover:border-indigo-100">
+                    <div
+                        class="w-14 h-14 bg-indigo-100 rounded-2xl flex items-center justify-center mb-6 text-indigo-600 group-hover:scale-110 transition">
+                        <i data-lucide="wand-2" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Sihirli Tuval</h3>
+                    <p class="text-gray-600">Çocuğunuzun çizdiği basit bir karalamayı, yapay zeka ile profesyonel bir
+                        masal görseline dönüştürün.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div
+                    class="group p-8 rounded-3xl bg-gray-50 hover:bg-pink-50 transition duration-300 border border-transparent hover:border-pink-100">
+                    <div
+                        class="w-14 h-14 bg-pink-100 rounded-2xl flex items-center justify-center mb-6 text-pink-600 group-hover:scale-110 transition">
+                        <i data-lucide="message-circle" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Kahramanla Sohbet</h3>
+                    <p class="text-gray-600">Masal bitti ama macera bitmedi. Çocuğunuz masal kahramanıyla sesli veya
+                        yazılı sohbet edebilir.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div
+                    class="group p-8 rounded-3xl bg-gray-50 hover:bg-blue-50 transition duration-300 border border-transparent hover:border-blue-100">
+                    <div
+                        class="w-14 h-14 bg-blue-100 rounded-2xl flex items-center justify-center mb-6 text-blue-600 group-hover:scale-110 transition">
+                        <i data-lucide="moon" class="w-8 h-8"></i>
+                    </div>
+                    <h3 class="text-xl font-bold mb-3">Akıllı Uyku Modu</h3>
+                    <p class="text-gray-600">Göz yormayan karanlık tema ve arka planda çalan rahatlatıcı yağmur
+                        sesleriyle mışıl mışıl uykular.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Social Proof -->
+    <section class="py-24 bg-gray-900 text-white overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-96 h-96 bg-indigo-600 rounded-full filter blur-[128px] opacity-20"></div>
+        <div class="absolute bottom-0 left-0 w-96 h-96 bg-pink-600 rounded-full filter blur-[128px] opacity-20"></div>
+
+        <div class="max-w-7xl mx-auto px-4 md:px-12 relative z-10 text-center">
+            <h2 class="text-3xl md:text-5xl font-bold mb-16">Ebeveynler Ne Diyor?</h2>
+            <div class="grid md:grid-cols-3 gap-8">
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700">
+                    <div class="flex gap-1 text-yellow-400 mb-4">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6">"Oğlum her gece 'Hadi sihirli tuvali açalım' diye yalvarıyor. Kendi
+                        çizdiği ejderhanın masala dönüşmesi paha biçilemez."</p>
+                    <div class="font-bold">Ayşe Yılmaz</div>
+                    <div class="text-sm text-gray-400">Can'ın Annesi (5 yaşında)</div>
+                </div>
+                <!-- More testimonials... -->
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700">
+                    <div class="flex gap-1 text-yellow-400 mb-4">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6">"Eğitim analiz paneli şok edici derecede iyi. Hangi kelimeleri
+                        öğrendiğini görmek beni çok mutlu ediyor."</p>
+                    <div class="font-bold">Murat Demir</div>
+                    <div class="text-sm text-gray-400">Ela'nın Babası (7 yaşında)</div>
+                </div>
+                <div class="bg-gray-800 p-8 rounded-2xl border border-gray-700">
+                    <div class="flex gap-1 text-yellow-400 mb-4">
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                        <i data-lucide="star" class="fill-current w-5 h-5"></i>
+                    </div>
+                    <p class="text-gray-300 mb-6">"Uyku modu hayat kurtarıcı. Masal biter bitmez müzik yavaşça kısılıyor
+                        ve kızım çoktan uyumuş oluyor."</p>
+                    <div class="font-bold">Selin Kara</div>
+                    <div class="text-sm text-gray-400">Ece'nin Annesi (4 yaşında)</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-50 py-12 border-t border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 md:px-12 flex flex-col md:flex-row justify-between items-center gap-6">
+            <div class="flex items-center gap-2">
+                <i data-lucide="sparkles" class="text-indigo-600"></i>
+                <span class="font-bold text-gray-900">Masal Fabrikası</span>
+            </div>
+            <div class="text-sm text-gray-500">
+                &copy; 2024 Masal Fabrikası. Tüm hakları saklıdır.
+            </div>
+            <div class="flex gap-6">
+                <a href="#" class="text-gray-500 hover:text-indigo-600"><i data-lucide="instagram"></i></a>
+                <a href="#" class="text-gray-500 hover:text-indigo-600"><i data-lucide="twitter"></i></a>
+                <a href="#" class="text-gray-500 hover:text-indigo-600"><i data-lucide="youtube"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        async function joinWaitlist() {
+            const email = document.getElementById('waitlist-email').value;
+            const messageDiv = document.getElementById('waitlist-message');
+            const formDiv = document.getElementById('waitlist-form');
+
+            if (!email || !email.includes('@')) {
+                alert('Lütfen geçerli bir e-posta adresi giriniz.');
+                return;
+            }
+
+            try {
+                // Not: Üretime geçerken backend URL'inizi buraya yazın
+                // const API_URL = 'https://your-backend.railway.app'; 
+                const API_URL = 'https://masalfabrikasi-production.up.railway.app/api/growth/waitlist';
+
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, source: 'landing_page' })
+                });
+
+                if (response.ok) {
+                    formDiv.classList.add('hidden');
+                    messageDiv.classList.remove('hidden');
+                    messageDiv.innerText = 'Harika! Listeye başarıyla eklendiniz. Yakında görüşmek üzere.';
+                } else {
+                    const err = await response.json();
+                    alert(err.detail || 'Bir hata oluştu. Lütfen tekrar deneyin.');
+                }
+            } catch (error) {
+                console.error('Waitlist error:', error);
+                alert('Sunucuya bağlanılamadı. Lütfen internetinizi kontrol edin.');
+            }
+        }
+    </script>
+</body>
+
+</html>

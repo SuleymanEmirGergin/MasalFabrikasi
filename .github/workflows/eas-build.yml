@@ -1,0 +1,71 @@
+name: EAS Build & Deploy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+  workflow_dispatch:
+    inputs:
+      profile:
+        description: 'Build profile (development/production)'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - development
+          - production
+
+jobs:
+  build:
+    name: Build Android App
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Setup EAS CLI
+        uses: expo/expo-github-action@v8
+        with:
+          eas-version: latest
+          token: ${{ secrets.EXPO_TOKEN }}
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Expo Doctor
+        run: npx expo-doctor || true
+
+      - name: Build Android (Production)
+        if: github.event_name == 'push' || github.event.inputs.profile == 'production'
+        run: eas build --profile production --platform android --non-interactive
+
+      - name: Build Android (Development)
+        if: github.event.inputs.profile == 'development'
+        run: eas build --profile development --platform android --non-interactive
+
+  notify:
+    name: Notify on Completion
+    needs: build
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Send success notification
+        if: needs.build.result == 'success'
+        run: echo "✅ Build completed successfully!"
+
+      - name: Send failure notification
+        if: needs.build.result == 'failure'
+        run: echo "❌ Build failed. Check logs for details."

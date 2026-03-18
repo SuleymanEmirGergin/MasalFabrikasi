@@ -1,0 +1,45 @@
+[
+  {
+    "id": "first_story",
+    "name": "İlk Hikâye",
+    "description": "İlk hikâyenizi oluşturun",
+    "icon": "book-open",
+    "xp_reward": 10
+  },
+  {
+    "id": "story_master",
+    "name": "Hikâye Ustası",
+    "description": "10 hikâye oluşturun",
+    "icon": "book-multiple",
+    "xp_reward": 50
+  },
+  {
+    "id": "favorite_collector",
+    "name": "Favori Toplayıcı",
+    "description": "5 hikâyeyi favorilere ekleyin",
+    "icon": "star",
+    "xp_reward": 25
+  },
+  {
+    "id": "character_creator",
+    "name": "Karakter Yaratıcısı",
+    "description": "İlk karakterinizi oluşturun",
+    "icon": "account-plus",
+    "xp_reward": 15
+  },
+  {
+    "id": "social_butterfly",
+    "name": "Sosyal Kelebek",
+    "description": "10 yorum yapın",
+    "icon": "comment-multiple",
+    "xp_reward": 30
+  },
+  {
+    "id": "popular_author",
+    "name": "Popüler Yazar",
+    "description": "Bir hikâyeniz 50 beğeni alsın",
+    "icon": "heart-multiple",
+    "xp_reward": 100
+  }
+]
+

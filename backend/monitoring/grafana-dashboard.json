@@ -1,0 +1,175 @@
+# Grafana Dashboard Configuration for Masal Fabrikası
+
+## 📊 Dashboard Import
+
+This JSON can be imported directly into Grafana.
+
+```json
+{
+    "dashboard": {
+        "title": "Masal Fabrikası - Application Metrics",
+        "tags": [
+            "masal-fabrikasi",
+            "production"
+        ],
+        "timezone": "browser",
+        "panels": [
+            {
+                "title": "HTTP Requests Rate",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total[5m])",
+                        "legendFormat": "{{method}} {{endpoint}}"
+                    }
+                ]
+            },
+            {
+                "title": "Response Time (p95)",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[5m]))",
+                        "legendFormat": "{{endpoint}}"
+                    }
+                ]
+            },
+            {
+                "title": "Error Rate",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(http_requests_total{status=~\"5..\"}[5m])",
+                        "legendFormat": "5xx errors"
+                    }
+                ]
+            },
+            {
+                "title": "Story Generation Rate",
+                "type": "graph",
+                "targets": [
+                    {
+                        "expr": "rate(story_generation_total[5m])",
+                        "legendFormat": "{{story_type}} - {{status}}"
+                    }
+                ]
+            },
+            {
+                "title": "Cache Hit Rate",
+                "type": "stat",
+                "targets": [
+                    {
+                        "expr": "rate(cache_hits_total[5m]) / (rate(cache_hits_total[5m]) + rate(cache_misses_total[5m])) * 100"
+                    }
+                ]
+            },
+            {
+                "title": "Active Users",
+                "type": "gauge",
+                "targets": [
+                    {
+                        "expr": "active_users_total"
+                    }
+                ]
+            }
+        ]
+    }
+}
+```
+
+## 🚀 Quick Setup
+
+### 1. Install Prometheus & Grafana
+
+```yaml
+# docker-compose.monitoring.yml
+version: '3.8'
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus_data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana_data:/var/lib/grafana
+
+volumes:
+  prometheus_data:
+  grafana_data:
+```
+
+### 2. Prometheus Configuration
+
+```yaml
+# prometheus.yml
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'masal-fabrikasi'
+   
+ static_configs:
+      - targets: ['backend: 8000'
+]
+```
+
+### 3. Start Monitoring Stack
+
+```bash
+docker-compose -f docker-compose.monitoring.yml up -d
+```
+
+### 4. Access
+
+- **Prometheus**: http: //localhost:9090
+- **Grafana**: http: //localhost:3000 (admin/admin)
+
+---
+
+## 📈 Alert Rules
+
+Create alerts in Grafana or Prometheus:
+
+```yaml
+# prometheus-alerts.yml
+groups:
+  - name: masal_fabrikasi_alerts
+    interval: 30s
+    rules:
+      - alert: HighErrorRate
+        expr: rate(http_requests_total{status=~"5.."
+}[
+    5m
+]) > 0.05
+        for: 5m
+        labels:
+          severity: critical
+        annotations:
+          summary: "High error rate detected"
+
+      - alert: SlowResponseTime
+        expr: histogram_quantile(0.95, rate(http_request_duration_seconds_bucket[
+    5m
+])) > 5
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Slow response time (p95 > 5s)"
+```
+
+---
+
+*Import this into Grafana for instant monitoring!*

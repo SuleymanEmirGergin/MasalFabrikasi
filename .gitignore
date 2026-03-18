@@ -1,0 +1,58 @@
+# Logs
+logs/
+*.log
+
+# Environment
+.env
+.env.local
+.env.production
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+.venv/
+ENV/
+
+# Node
+node_modules/
+npm-debug.log*
+.expo/
+.expo-shared/
+
+# Storage
+storage/
+temp/
+
+# LLM / editor
+.llm-chat-history/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+docker-compose.override.yml
+
+# Testing
+.coverage
+htmlcov/
+.pytest_cache/
+coverage/
+test-results/
+playwright-report/
+.playwright/
+
+# Build
+build/
+dist/
+*.egg-info/

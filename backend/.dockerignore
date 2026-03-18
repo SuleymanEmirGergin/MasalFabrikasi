@@ -1,0 +1,43 @@
+# Virtual env and caches
+.venv
+venv
+__pycache__
+*.py[cod]
+*.pyo
+.pytest_cache
+.coverage
+htmlcov
+*.egg-info
+.eggs
+
+# Git and IDE
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+.idea
+.vscode
+*.md
+
+# Tests (not needed in production image)
+tests
+*.test.py
+pytest.ini
+locustfile.py
+
+# Docs and scripts (optional: remove if you need them in image)
+docs
+scripts/security_scan.py
+scripts/smoke_test.py
+*.md
+
+# Local storage (mounted at runtime)
+storage
+logs
+*.db
+test.db
+
+# Misc
+*.log
+.DS_Store
