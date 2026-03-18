@@ -70,6 +70,7 @@ jobs:
     - name: Security scan (pip-audit)
       run: |
         cd backend
+        pip install --upgrade "pip>=26.0"
         pip install pip-audit
         pip-audit
     
