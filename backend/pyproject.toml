@@ -42,6 +42,8 @@ extend-exclude = '''
 
 [tool.ruff]
 line-length = 100
+
+[tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
     "W",  # pycodestyle warnings
@@ -53,4 +55,12 @@ select = [
 ignore = [
     "E501",  # line too long (handled by black)
     "B008",  # do not perform function calls in argument defaults
+    "B904",  # raise ... from err (many existing; fix gradually)
+    "E402",  # module level import not at top (database.py etc.)
+    "E722",  # bare except (fix gradually)
+    "E701",  # multiple statements on one line
+    "E741",  # ambiguous variable name (e.g. l)
+    "C408",  # unnecessary dict() call
+    "W293",  # blank line contains whitespace
+    "F401",  # unused imports (fix gradually)
 ]

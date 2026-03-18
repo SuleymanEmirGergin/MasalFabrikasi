@@ -1,85 +1,82 @@
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Query
-from pydantic import BaseModel
-from typing import Optional, List, Union, Dict, Any
-import uuid
 import os
+import uuid
 from datetime import datetime
-from sqlalchemy.orm import Session
-from fastapi import APIRouter, HTTPException, BackgroundTasks, Query, Depends
-from app.core.database import get_db
+from typing import List, Optional, Union
 
-from app.services.story_service import StoryService
-from app.services.image_service import ImageService
-from app.services.tts_service import TTSService
-from app.services.story_storage import StoryStorage
-from app.core.cache import cache
-from app.core.rate_limiter import limiter
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException, Query, Request
+from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+
 from app.core.auth_dependencies import get_current_user
-from fastapi import Request
-from app.repositories.job_repository import JobRepository
-from app.repositories.story_repository import StoryRepository
-from app.models import JobStatus, JobType
-from app.tasks.story_tasks import generate_full_story_task
-from app.services.story_editor import StoryEditor
-from app.services.multi_image_service import MultiImageService
-from app.services.statistics_service import StatisticsService
-from app.services.template_service import TemplateService
-from app.services.collection_service import CollectionService
-from app.services.export_service import ExportService
-from app.services.interactive_story_service import InteractiveStoryService
-from app.services.translation_service import TranslationService
-from app.services.user_profile_service import UserProfileService
-from app.services.dialogue_service import DialogueService
-from app.services.character_service import CharacterService
-from app.services.story_outline_service import StoryOutlineService
-from app.services.comment_service import CommentService
-from app.services.like_service import LikeService
-from app.services.collaboration_service import CollaborationService
-from app.services.voice_acting_service import VoiceActingService
-from app.services.sound_effect_service import SoundEffectService
-from app.services.story_versioning_service import StoryVersioningService
-from app.services.story_analysis_service import StoryAnalysisService
-from app.services.recommendation_service import RecommendationService
-from app.services.music_service import MusicService
-from app.services.story_comparison_service import StoryComparisonService
-from app.services.community_service import CommunityService
-from app.services.search_service import SearchService
-from app.services.analytics_service import AnalyticsService
-from app.services.story_series_service import StorySeriesService
-from app.services.story_improvement_service import StoryImprovementService
-from app.services.parental_control_service import ParentalControlService
-from app.services.audio_recording_service import AudioRecordingService
-from app.services.sharing_service import SharingService
-from app.services.ebook_service import EbookService
-from app.services.performance_metrics_service import PerformanceMetricsService
-from app.services.ai_chatbot_service import AIChatbotService
-from app.services.advanced_translation_service import AdvancedTranslationService
-from app.services.voice_command_service import VoiceCommandService
-from app.services.marketplace_service import MarketplaceService
-from app.services.realtime_collaboration_service import RealtimeCollaborationService
-from app.services.advanced_analytics_service import AdvancedAnalyticsService
-from app.services.social_features_service import SocialFeaturesService
-from app.services.story_scheduler_service import StorySchedulerService
-from app.services.content_moderation_service import ContentModerationService
-from app.services.plagiarism_service import PlagiarismService
-from app.services.story_rating_service import StoryRatingService
-from app.services.curated_collections_service import CuratedCollectionsService
-from app.services.reading_goals_service import ReadingGoalsService
-from app.services.mood_recommendation_service import MoodRecommendationService
-from app.services.advanced_export_service import AdvancedExportService
-from app.services.platform_integration_service import PlatformIntegrationService
-from app.services.api_webhook_service import APIWebhookService
-from app.services.template_marketplace_service import TemplateMarketplaceService
-from app.services.voice_story_creation_service import VoiceStoryCreationService
-from app.services.ar_vr_service import ARVRService
-from app.services.timeline_service import TimelineService
-from app.services.geolocation_service import GeolocationService
-from app.services.backup_sync_service import BackupSyncService
-from app.services.filter_service import FilterService
-from app.services.reporting_service import ReportingService
-from app.services.offline_service import OfflineService
+from app.core.cache import cache
 from app.core.config import settings
-from fastapi.responses import JSONResponse, FileResponse
+from app.core.database import get_db
+from app.core.rate_limiter import limiter
+from app.models import JobStatus, JobType
+from app.repositories.job_repository import JobRepository
+from app.services.advanced_analytics_service import AdvancedAnalyticsService
+from app.services.advanced_export_service import AdvancedExportService
+from app.services.advanced_translation_service import AdvancedTranslationService
+from app.services.ai_chatbot_service import AIChatbotService
+from app.services.analytics_service import AnalyticsService
+from app.services.api_webhook_service import APIWebhookService
+from app.services.ar_vr_service import ARVRService
+from app.services.audio_recording_service import AudioRecordingService
+from app.services.backup_sync_service import BackupSyncService
+from app.services.character_service import CharacterService
+from app.services.collaboration_service import CollaborationService
+from app.services.collection_service import CollectionService
+from app.services.comment_service import CommentService
+from app.services.community_service import CommunityService
+from app.services.content_moderation_service import ContentModerationService
+from app.services.curated_collections_service import CuratedCollectionsService
+from app.services.dialogue_service import DialogueService
+from app.services.ebook_service import EbookService
+from app.services.export_service import ExportService
+from app.services.filter_service import FilterService
+from app.services.geolocation_service import GeolocationService
+from app.services.image_service import ImageService
+from app.services.interactive_story_service import InteractiveStoryService
+from app.services.like_service import LikeService
+from app.services.marketplace_service import MarketplaceService
+from app.services.mood_recommendation_service import MoodRecommendationService
+from app.services.multi_image_service import MultiImageService
+from app.services.music_service import MusicService
+from app.services.offline_service import OfflineService
+from app.services.parental_control_service import ParentalControlService
+from app.services.performance_metrics_service import PerformanceMetricsService
+from app.services.plagiarism_service import PlagiarismService
+from app.services.platform_integration_service import PlatformIntegrationService
+from app.services.reading_goals_service import ReadingGoalsService
+from app.services.realtime_collaboration_service import RealtimeCollaborationService
+from app.services.recommendation_service import RecommendationService
+from app.services.reporting_service import ReportingService
+from app.services.search_service import SearchService
+from app.services.sharing_service import SharingService
+from app.services.social_features_service import SocialFeaturesService
+from app.services.sound_effect_service import SoundEffectService
+from app.services.statistics_service import StatisticsService
+from app.services.story_analysis_service import StoryAnalysisService
+from app.services.story_comparison_service import StoryComparisonService
+from app.services.story_editor import StoryEditor
+from app.services.story_improvement_service import StoryImprovementService
+from app.services.story_outline_service import StoryOutlineService
+from app.services.story_rating_service import StoryRatingService
+from app.services.story_series_service import StorySeriesService
+from app.services.story_service import StoryService
+from app.services.story_storage import StoryStorage
+from app.services.story_versioning_service import StoryVersioningService
+from app.services.template_marketplace_service import TemplateMarketplaceService
+from app.services.template_service import TemplateService
+from app.services.timeline_service import TimelineService
+from app.services.translation_service import TranslationService
+from app.services.tts_service import TTSService
+from app.services.user_profile_service import UserProfileService
+from app.services.voice_acting_service import VoiceActingService
+from app.services.voice_command_service import VoiceCommandService
+from app.services.voice_story_creation_service import VoiceStoryCreationService
+from app.tasks.story_tasks import generate_full_story_task
 
 router = APIRouter()
 story_service = StoryService()
@@ -156,7 +153,7 @@ class StoryRequest(BaseModel):
     audio_speed: float = 1.0  # Ses hızı (0.5 - 2.0)
     audio_slow: bool = False  # Yavaş konuşma (gTTS için)
     use_async: bool = True  # Asenkron üretim (Job Queue)
-    
+
     # Advanced Settings
     creativity: float = 0.8 # 0.0 - 1.0
     pacing: str = "medium" # slow, medium, fast
@@ -204,7 +201,7 @@ class StoryListItem(BaseModel):
 @limiter.limit("5/minute")
 async def generate_story(
     request: Request, # Required for limiter
-    story_request: StoryRequest, 
+    story_request: StoryRequest,
     background_tasks: BackgroundTasks,
     db: Session = Depends(get_db),
     current_user: dict = Depends(get_current_user)
@@ -219,37 +216,37 @@ async def generate_story(
         if request.use_async:
             # --- ASYNC JOB FLOW ---
             job_repo = JobRepository(db)
-            
+
             job_data = {
                 "user_id": user_id,
                 "job_type": JobType.COMPLETE_STORY,
                 "input_data": story_request.dict(exclude={"save", "use_async"})
             }
-            
+
             job = job_repo.create_job(job_data)
-            
+
             # Celery task'ı başlat
-            task = generate_full_story_task.delay(str(job.id))
-            
+            generate_full_story_task.delay(str(job.id))
+
             # Update job with celery task id (async)
             # job_repo.update_job_status(job.id, JobStatus.QUEUED, celery_task_id=task.id)
-            # Yukarıdaki create_job sonrası update yerine, worker içinde update ediyoruz 
+            # Yukarıdaki create_job sonrası update yerine, worker içinde update ediyoruz
             # veya burada yapabiliriz ama db session sorun olmasın diye worker'a bırakalım
-            
+
             return JobResponse(
                 job_id=str(job.id),
                 status="queued",
                 message="Hikaye oluşturma işlemi sıraya alındı.",
                 position=1
             )
-            
+
         else:
             # --- SYNC FLOW (Legacy) ---
             story_id = str(uuid.uuid4())
-            
+
             # 1. Hikâye metni üretimi
             story_text = await story_service.generate_story(
-                story_request.theme, 
+                story_request.theme,
                 story_request.language,
                 story_request.story_type,
                 creativity=story_request.creativity,
@@ -258,26 +255,26 @@ async def generate_story(
                 vocabulary=story_request.vocabulary,
                 model_override=story_request.model
             )
-            
+
             # 2. Görsel üretimi
             image_url = await image_service.generate_image(
-                story_text, 
+                story_text,
                 story_request.theme,
                 image_style=story_request.image_style,
                 image_size=story_request.image_size
             )
-            
+
             # 3. Seslendirme
             audio_url = await tts_service.generate_speech(
-                story_text, 
-                story_request.language, 
+                story_text,
+                story_request.language,
                 story_id,
                 audio_speed=story_request.audio_speed,
                 audio_slow=story_request.audio_slow
             )
-            
+
             created_at = datetime.now().isoformat()
-            
+
             # Hikâyeyi kaydet
             story_data = {
                 'story_id': story_id,
@@ -289,14 +286,14 @@ async def generate_story(
                 'story_type': story_request.story_type,
                 'created_at': created_at,
             }
-            
+
             if story_request.save:
                 saved_story = story_storage.save_story(story_data)
                 story_data['is_favorite'] = saved_story.get('is_favorite', False)
-            
+
             # Gamification: Award XP
             xp_result = user_profile_service.add_xp(50)  # 50 XP per story
-            
+
             return StoryResponse(
                 story_id=story_id,
                 story_text=story_text,
@@ -313,7 +310,7 @@ async def generate_story(
                 leveled_up=xp_result['leveled_up'],
                 level_message=xp_result['message']
             )
-    
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Hikâye üretilirken hata oluştu: {str(e)}")
 
@@ -326,10 +323,10 @@ def get_job_status(job_id: str, db: Session = Depends(get_db)):
     try:
         job_repo = JobRepository(db)
         job = job_repo.get_job_by_id(uuid.UUID(job_id))
-        
+
         if not job:
             raise HTTPException(status_code=404, detail="İşlem bulunamadı")
-            
+
         if job.status == JobStatus.SUCCEEDED:
             # Sonuç verisini döndür
             result = job.result_data
@@ -341,7 +338,7 @@ def get_job_status(job_id: str, db: Session = Depends(get_db)):
                 created_at=str(job.completed_at),
                 is_favorite=False
             )
-            
+
         return JobResponse(
             job_id=str(job.id),
             status=job.status,
@@ -516,11 +513,11 @@ async def get_collection(collection_id: str):
         collection = collection_service.get_collection(collection_id)
         if not collection:
             raise HTTPException(status_code=404, detail="Koleksiyon bulunamadı")
-        
+
         # Hikâyeleri de getir
         stories = collection_service.get_collection_stories(collection_id, story_storage)
         collection['stories'] = stories
-        
+
         return collection
     except HTTPException:
         raise
@@ -605,13 +602,13 @@ async def export_story_to_pdf(story_id: str):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         pdf_path = await export_service.export_to_pdf(story)
         full_path = f"{settings.STORAGE_PATH}{pdf_path}"
-        
+
         if not os.path.exists(full_path):
             raise HTTPException(status_code=500, detail="PDF oluşturulamadı")
-        
+
         return FileResponse(
             full_path,
             media_type='application/pdf',
@@ -632,13 +629,13 @@ async def export_story_to_epub(story_id: str):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         epub_path = await export_service.export_to_epub(story)
         full_path = f"{settings.STORAGE_PATH}{epub_path}"
-        
+
         if not os.path.exists(full_path):
             raise HTTPException(status_code=500, detail="EPUB oluşturulamadı")
-        
+
         return FileResponse(
             full_path,
             media_type='application/epub+zip',
@@ -730,18 +727,18 @@ async def translate_story(story_id: str, target_language: str):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         translated_story = await translation_service.translate_story(story, target_language)
-        
+
         # Çevrilmiş hikâyeyi yeni bir hikâye olarak kaydet
         import uuid
         translated_story['story_id'] = str(uuid.uuid4())
         translated_story['created_at'] = datetime.now().isoformat()
         translated_story['is_translation'] = True
         translated_story['original_story_id'] = story_id
-        
+
         saved_story = story_storage.save_story(translated_story)
-        
+
         return StoryResponse(
             story_id=saved_story.get('story_id'),
             story_text=saved_story.get('story_text'),
@@ -799,7 +796,7 @@ async def update_user_preferences(request: PreferencesRequest):
             preferences['default_audio_speed'] = request.default_audio_speed
         if request.theme is not None:
             preferences['theme'] = request.theme
-            
+
         updated_profile = user_profile_service.update_preferences(preferences)
         return {"message": "Tercihler güncellendi", "preferences": updated_profile.get('preferences')}
     except Exception as e:
@@ -808,14 +805,13 @@ async def update_user_preferences(request: PreferencesRequest):
 
 @router.get("/stories/search/semantic", response_model=List[StoryListItem])
 def search_stories_semantic(
-    q: str, 
-    limit: int = 5, 
+    q: str,
+    limit: int = 5,
     db: Session = Depends(get_db)
 ):
     """
     Semantic search for stories using vector embeddings (OpenAI & pgvector).
     """
-    from app.services.search_service import SearchService
     service = SearchService(db)
     results = service.search_stories(q, limit)
 
@@ -861,17 +857,17 @@ async def add_dialogue_to_story(story_id: str, request: DialogueRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         # Karakterleri getir
         characters = []
         for char_id in request.character_ids:
             character = character_service.get_character(char_id)
             if character:
                 characters.append(character)
-        
+
         if len(characters) < 2:
             raise HTTPException(status_code=400, detail="En az 2 karakter gerekli")
-        
+
         # Diyalog üret
         dialogues = await dialogue_service.generate_dialogue(
             characters,
@@ -879,21 +875,21 @@ async def add_dialogue_to_story(story_id: str, request: DialogueRequest):
             request.dialogue_type,
             story.get('language', 'tr')
         )
-        
+
         # Hikâyeye diyalog ekle
         updated_story_text = await dialogue_service.add_dialogue_to_story(
             story.get('story_text', ''),
             dialogues,
             request.position
         )
-        
+
         # Hikâyeyi güncelle
         story['story_text'] = updated_story_text
         story['dialogues'] = story.get('dialogues', []) + dialogues
         story['updated_at'] = datetime.now().isoformat()
-        
+
         updated_story = story_storage.save_story(story)
-        
+
         return {
             "story_id": story_id,
             "dialogues": dialogues,
@@ -922,24 +918,24 @@ async def generate_story_with_dialogue(request: GenerateWithDialogueRequest, bac
     """
     try:
         story_id = str(uuid.uuid4())
-        
+
         # Karakterleri getir
         characters = []
         for char_id in request.character_ids:
             character = character_service.get_character(char_id)
             if character:
                 characters.append(character)
-        
+
         if len(characters) < 2:
             raise HTTPException(status_code=400, detail="En az 2 karakter gerekli")
-        
+
         # Hikâye metni üret
         story_text = await story_service.generate_story(
             request.theme,
             request.language,
             request.story_type
         )
-        
+
         # Diyalog üret
         dialogues = await dialogue_service.generate_dialogue(
             characters,
@@ -947,14 +943,14 @@ async def generate_story_with_dialogue(request: GenerateWithDialogueRequest, bac
             request.dialogue_type,
             request.language
         )
-        
+
         # Hikâyeye diyalog ekle
         story_with_dialogue = await dialogue_service.add_dialogue_to_story(
             story_text,
             dialogues,
             "middle"
         )
-        
+
         # Görsel üret
         image_url = await image_service.generate_image(
             story_with_dialogue,
@@ -962,7 +958,7 @@ async def generate_story_with_dialogue(request: GenerateWithDialogueRequest, bac
             image_style="fantasy",
             image_size="1024x1024"
         )
-        
+
         # Ses üret
         audio_url = await tts_service.generate_speech(
             story_with_dialogue,
@@ -971,9 +967,9 @@ async def generate_story_with_dialogue(request: GenerateWithDialogueRequest, bac
             audio_speed=1.0,
             audio_slow=False
         )
-        
+
         created_at = datetime.now().isoformat()
-        
+
         story_data = {
             'story_id': story_id,
             'story_text': story_with_dialogue,
@@ -986,13 +982,13 @@ async def generate_story_with_dialogue(request: GenerateWithDialogueRequest, bac
             'character_ids': request.character_ids,
             'created_at': created_at,
         }
-        
+
         if request.save:
             saved_story = story_storage.save_story(story_data)
             story_data['is_favorite'] = saved_story.get('is_favorite', False)
-        
+
         background_tasks.add_task(cleanup_files, story_id)
-        
+
         return StoryResponse(
             story_id=story_id,
             story_text=story_with_dialogue,
@@ -1043,11 +1039,11 @@ async def get_story_outline(story_id: str):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         # Eğer outline kaydedilmişse döndür
         if story.get('outline'):
             return story.get('outline')
-        
+
         # Yoksa yeni outline oluştur
         outline = await story_outline_service.generate_outline(
             story.get('theme', ''),
@@ -1055,11 +1051,11 @@ async def get_story_outline(story_id: str):
             story.get('story_type', 'masal'),
             True
         )
-        
+
         # Outline'ı hikâyeye kaydet
         story['outline'] = outline
         story_storage.save_story(story)
-        
+
         return outline
     except HTTPException:
         raise
@@ -1080,18 +1076,18 @@ async def add_plot_twist(story_id: str, request: PlotTwistRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         # Plot twist üret
         plot_twist_text = await story_service.generate_plot_twist(
             story.get('story_text', ''),
             story.get('language', 'tr')
         )
-        
+
         # Hikâyeyi güncelle
         story['story_text'] = plot_twist_text
         story['has_plot_twist'] = True
         story['updated_at'] = datetime.now().isoformat()
-        
+
         # Görseli yeniden üret (plot twist'e uygun)
         story['image_url'] = await image_service.generate_image(
             plot_twist_text,
@@ -1099,7 +1095,7 @@ async def add_plot_twist(story_id: str, request: PlotTwistRequest):
             image_style=story.get('image_style', 'fantasy'),
             image_size=story.get('image_size', '1024x1024')
         )
-        
+
         # Sesi yeniden üret
         story['audio_url'] = await tts_service.generate_speech(
             plot_twist_text,
@@ -1108,9 +1104,9 @@ async def add_plot_twist(story_id: str, request: PlotTwistRequest):
             audio_speed=story.get('audio_speed', 1.0),
             audio_slow=story.get('audio_slow', False)
         )
-        
+
         updated_story = story_storage.save_story(story)
-        
+
         return {
             "message": "Plot twist eklendi",
             "story": updated_story
@@ -1138,27 +1134,27 @@ async def generate_alternative_ending(story_id: str, request: AlternativeEndingR
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         # Alternatif son üret
         alternative_ending = await story_service.generate_alternative_ending(
             story.get('story_text', ''),
             request.ending_type,
             story.get('language', 'tr')
         )
-        
+
         # Alternatif sonları kaydet
         if 'alternative_endings' not in story:
             story['alternative_endings'] = []
-        
+
         story['alternative_endings'].append({
             'ending_type': request.ending_type,
             'text': alternative_ending,
             'created_at': datetime.now().isoformat(),
         })
-        
+
         story['updated_at'] = datetime.now().isoformat()
         updated_story = story_storage.save_story(story)
-        
+
         return {
             "message": "Alternatif son oluşturuldu",
             "ending": alternative_ending,
@@ -1180,19 +1176,19 @@ async def continue_story(story_id: str, request: ContinueStoryRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         # Hikâyeyi devam ettir
         continued_story_text = await story_service.continue_story(
             story.get('story_text', ''),
             request.continuation_length,
             story.get('language', 'tr')
         )
-        
+
         # Hikâyeyi güncelle
         story['story_text'] = continued_story_text
         story['is_continued'] = True
         story['updated_at'] = datetime.now().isoformat()
-        
+
         # Görseli yeniden üret
         story['image_url'] = await image_service.generate_image(
             continued_story_text,
@@ -1200,7 +1196,7 @@ async def continue_story(story_id: str, request: ContinueStoryRequest):
             image_style=story.get('image_style', 'fantasy'),
             image_size=story.get('image_size', '1024x1024')
         )
-        
+
         # Sesi yeniden üret
         story['audio_url'] = await tts_service.generate_speech(
             continued_story_text,
@@ -1209,9 +1205,9 @@ async def continue_story(story_id: str, request: ContinueStoryRequest):
             audio_speed=story.get('audio_speed', 1.0),
             audio_slow=story.get('audio_slow', False)
         )
-        
+
         updated_story = story_storage.save_story(story)
-        
+
         return StoryResponse(
             story_id=updated_story.get('story_id'),
             story_text=updated_story.get('story_text'),
@@ -1243,7 +1239,7 @@ async def add_comment(story_id: str, request: CommentRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         comment = comment_service.add_comment(story_id, request.user_id, request.text)
         return comment
     except HTTPException:
@@ -1303,7 +1299,7 @@ async def like_story(story_id: str, user_id: str = Query(...)):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         result = like_service.like_story(story_id, user_id)
         return result
     except HTTPException:
@@ -1345,11 +1341,11 @@ async def set_story_visibility(story_id: str, is_public: bool = Query(...)):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         story['is_public'] = is_public
         story['updated_at'] = datetime.now().isoformat()
-        updated_story = story_storage.save_story(story)
-        
+        story_storage.save_story(story)
+
         return {"message": "Görünürlük güncellendi", "is_public": is_public}
     except HTTPException:
         raise
@@ -1380,15 +1376,15 @@ async def get_trending_stories(limit: int = 10):
     try:
         all_stories = story_storage.get_all_stories()
         public_stories = [s for s in all_stories if s.get('is_public', False)]
-        
+
         # Her hikâye için beğeni sayısını al
         for story in public_stories:
             likes_data = like_service.get_story_likes(story.get('story_id'))
             story['like_count'] = likes_data.get('like_count', 0)
-        
+
         # Beğeni sayısına göre sırala
         public_stories.sort(key=lambda x: x.get('like_count', 0), reverse=True)
-        
+
         return {"stories": public_stories[:limit]}
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Trend hikâyeler yüklenirken hata oluştu: {str(e)}")
@@ -1414,7 +1410,7 @@ async def add_collaborator(story_id: str, request: AddCollaboratorRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         result = collaboration_service.add_collaborator(story_id, request.user_id, request.role)
         return result
     except HTTPException:
@@ -1444,19 +1440,19 @@ async def add_section(story_id: str, request: AddSectionRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         section = collaboration_service.add_section(
             story_id,
             request.user_id,
             request.section_text,
             request.section_index
         )
-        
+
         # Hikâye metnini güncelle
         story['story_text'] = f"{story.get('story_text', '')}\n\n{request.section_text}"
         story['updated_at'] = datetime.now().isoformat()
         story_storage.save_story(story)
-        
+
         return section
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
@@ -1551,19 +1547,19 @@ async def add_sound_effect_to_story(story_id: str, request: AddSoundEffectReques
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         if not story.get('audio_url'):
             raise HTTPException(status_code=400, detail="Hikâyenin ses dosyası bulunamadı")
-        
+
         # Ses dosyası yolunu al
         audio_path = os.path.join(
             settings.STORAGE_PATH,
             story['audio_url'].replace('/storage/audio/', 'audio/')
         )
-        
+
         if not os.path.exists(audio_path):
             raise HTTPException(status_code=404, detail="Ses dosyası bulunamadı")
-        
+
         # Ses efektini ekle
         new_audio_url = await sound_effect_service.add_sound_effect_to_audio(
             audio_path,
@@ -1574,12 +1570,12 @@ async def add_sound_effect_to_story(story_id: str, request: AddSoundEffectReques
             request.fade_in,
             request.fade_out
         )
-        
+
         # Hikâyeyi güncelle
         story['audio_url'] = new_audio_url
         story['updated_at'] = datetime.now().isoformat()
         story_storage.save_story(story)
-        
+
         return {"message": "Ses efekti eklendi", "audio_url": new_audio_url}
     except HTTPException:
         raise
@@ -1596,30 +1592,30 @@ async def add_multiple_sound_effects_to_story(story_id: str, request: AddMultipl
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         if not story.get('audio_url'):
             raise HTTPException(status_code=400, detail="Hikâyenin ses dosyası bulunamadı")
-        
+
         # Ses dosyası yolunu al
         audio_path = os.path.join(
             settings.STORAGE_PATH,
             story['audio_url'].replace('/storage/audio/', 'audio/')
         )
-        
+
         if not os.path.exists(audio_path):
             raise HTTPException(status_code=404, detail="Ses dosyası bulunamadı")
-        
+
         # Ses efektlerini ekle
         new_audio_url = await sound_effect_service.add_multiple_sound_effects(
             audio_path,
             request.effects
         )
-        
+
         # Hikâyeyi güncelle
         story['audio_url'] = new_audio_url
         story['updated_at'] = datetime.now().isoformat()
         story_storage.save_story(story)
-        
+
         return {"message": "Ses efektleri eklendi", "audio_url": new_audio_url}
     except HTTPException:
         raise
@@ -1648,12 +1644,12 @@ async def get_sound_effect_suggestions(story_id: str):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         suggestions = sound_effect_service.get_effect_suggestions(
             story.get('story_text', ''),
             story.get('theme', '')
         )
-        
+
         return {"suggestions": suggestions}
     except HTTPException:
         raise
@@ -1669,21 +1665,19 @@ async def get_share_data(story_id: str):
     story = story_storage.get_story(story_id)
     if not story:
         raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-    
+
     # Paylaşım için formatlanmış veri
     story_preview = story.get('story_text', '')
     if len(story_preview) > 200:
         story_preview = story_preview[:200] + "..."
-    
-    share_text = f"🎭 {story.get('theme', 'Hikâye')}\n\n{story_preview}\n\n#MasalFabrikasıAI"
-    
+
+    f"🎭 {story.get('theme', 'Hikâye')}\n\n{story_preview}\n\n#MasalFabrikasıAI"
+
     # Paylaşım URL'i (production'da gerçek URL olmalı)
-    base_url = f"http://{settings.BACKEND_HOST}:{settings.BACKEND_PORT}"
     if settings.BACKEND_HOST == "0.0.0.0":
-        base_url = "http://localhost:8000"  # Development için
-    
-    share_url = f"{base_url}/stories/{story_id}"
-    
+        pass  # Development için
+
+
     # Görsel URL'ini tam yap
 
 class StoryEditRequest(BaseModel):
@@ -1737,7 +1731,7 @@ async def edit_story(story_id: str, request: StoryEditRequest):
             )
         else:
             raise HTTPException(status_code=400, detail="En az bir düzenleme parametresi gerekli")
-        
+
         return StoryResponse(
             story_id=updated_story.get('story_id'),
             story_text=updated_story.get('story_text'),
@@ -1847,7 +1841,7 @@ async def generate_multi_images(story_id: str, request: MultiImageRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         image_urls = await multi_image_service.generate_images_for_story(
             story.get('story_text', ''),
             story.get('theme', ''),
@@ -1856,11 +1850,11 @@ async def generate_multi_images(story_id: str, request: MultiImageRequest):
             image_size=request.image_size,
             max_images=request.max_images
         )
-        
+
         # Görselleri hikâyeye kaydet (opsiyonel - yeni bir alan olarak)
         story['multi_images'] = image_urls
         story_storage.save_story(story)
-        
+
         return {
             "story_id": story_id,
             "images": image_urls,
@@ -1988,11 +1982,17 @@ async def get_weekly_themes():
 
 # Gelişmiş Arama Endpoint'leri
 @router.get("/search")
-async def ai_search(query: str, language: Optional[str] = None, limit: int = 10):
+async def ai_search(
+    query: str,
+    language: Optional[str] = None,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+):
     """
     AI destekli arama yapar.
     """
     try:
+        search_service = SearchService(db)
         results = await search_service.ai_search(query, language, limit)
         return {"results": results, "query": query}
     except Exception as e:
@@ -2000,11 +2000,16 @@ async def ai_search(query: str, language: Optional[str] = None, limit: int = 10)
 
 
 @router.get("/search/semantic")
-async def semantic_search(query: str, limit: int = 10):
+async def semantic_search(
+    query: str,
+    limit: int = 10,
+    db: Session = Depends(get_db),
+):
     """
     Anlamsal arama yapar.
     """
     try:
+        search_service = SearchService(db)
         results = await search_service.semantic_search(query, limit)
         return {"results": results, "query": query}
     except Exception as e:
@@ -2122,7 +2127,7 @@ async def analyze_story_quality(story_id: str):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         analysis = await story_improvement_service.analyze_story_quality(
             story.get('story_text', ''),
             story.get('language', 'tr')
@@ -2147,13 +2152,13 @@ async def improve_story(story_id: str, request: ImproveStoryRequest):
         story = story_storage.get_story(story_id)
         if not story:
             raise HTTPException(status_code=404, detail="Hikâye bulunamadı")
-        
+
         improved_text = await story_improvement_service.get_improved_version(
             story.get('story_text', ''),
             request.improvement_type,
             story.get('language', 'tr')
         )
-        
+
         return {
             "original_text": story.get('story_text', ''),
             "improved_text": improved_text,
@@ -2467,10 +2472,10 @@ async def get_reading_progress(story_id: str, user_id: str):
         raise HTTPException(status_code=500, detail=f"İlerleme yüklenirken hata oluştu: {str(e)}")
 
 
-@router.get("/stories/trending")
-async def get_trending_stories(days: int = 7, limit: int = 10):
+@router.get("/stories/trending/by-metrics")
+async def get_trending_stories_by_metrics(days: int = 7, limit: int = 10):
     """
-    Trend hikâyeleri getirir.
+    Trend hikâyeleri getirir (metrik tabanlı).
     """
     try:
         trending = performance_metrics_service.get_trending_stories(days, limit)

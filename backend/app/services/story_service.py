@@ -1,6 +1,5 @@
-import os
-import os
 from openai import AsyncOpenAI
+
 try:
     from transformers import pipeline
     TRANSFORMERS_AVAILABLE = True
@@ -8,32 +7,29 @@ except ImportError:
     TRANSFORMERS_AVAILABLE = False
     pipeline = None
 from app.core.config import settings
-from app.services.tts_service import TTSService
-from app.services.search_service import SearchService
 from app.core.resilience import openai_circuit_breaker, retry_on_failure
-
-
 from app.services.wiro_client import wiro_client
+
 
 class StoryService:
     def __init__(self):
         self.draft_client = None
         self.final_client = None
-        
+
         # Draft Client (Gemini Flash via Wiro or Google)
         if settings.GEMINI_API_KEY:
             self.draft_client = AsyncOpenAI(
-                api_key=settings.GEMINI_API_KEY, 
+                api_key=settings.GEMINI_API_KEY,
                 base_url=settings.GPT_BASE_URL if "wiro" in settings.GPT_BASE_URL else "https://generativelanguage.googleapis.com/v1beta/openai/"
             )
-            
+
         # Final Story Client (Standard OpenAI compatible)
         if settings.GPT_API_KEY:
             self.final_client = AsyncOpenAI(
                 api_key=settings.GPT_API_KEY,
                 base_url=settings.GPT_BASE_URL
             )
-        
+
         # Fallback for search/legacy if needed
         self.openai_client = self.final_client or self.draft_client
 
@@ -43,7 +39,7 @@ class StoryService:
         """Taslak veya fikir üretimi için hızlı Gemini modelini kullanır."""
         if not self.draft_client:
             return "Draft client not configured."
-        
+
         try:
             response = await self.draft_client.chat.completions.create(
                 model=settings.GEMINI_MODEL,
@@ -58,9 +54,9 @@ class StoryService:
 
     @retry_on_failure(max_retries=2, delay=2.0)
     async def generate_story(
-        self, 
-        theme: str, 
-        language: str = "tr", 
+        self,
+        theme: str,
+        language: str = "tr",
         story_type: str = "masal",
         creativity: float = 0.8,
         pacing: str = "medium",
@@ -76,10 +72,10 @@ class StoryService:
         model_override: optional model slug (e.g. openai/gpt-5-nano) for this request.
         """
         prompt = self._create_prompt(
-            theme, language, story_type, pacing, perspective, vocabulary, 
+            theme, language, story_type, pacing, perspective, vocabulary,
             age_group=age_group, pedagogical_theme=pedagogical_theme
         )
-        
+
         effective_model = (model_override or getattr(settings, "GPT_MODEL", "") or "").strip() or settings.GPT_MODEL
         gpt_model_lower = effective_model.lower()
         use_wiro_run = "gpt-oss" in gpt_model_lower or "gpt-5-nano" in gpt_model_lower
@@ -145,17 +141,17 @@ class StoryService:
                 return response.choices[0].message.content.strip()
             except Exception as e:
                 print(f"Standard story generation error: {e}")
-        
+
         # Fallback to draft if final fails
         if self.draft_client:
             return await self.generate_draft(prompt)
-            
+
         return self._generate_fallback_story(theme, language)
-    
+
     def _create_prompt(
-        self, 
-        theme: str, 
-        language: str, 
+        self,
+        theme: str,
+        language: str,
         story_type: str = "masal",
         pacing: str = "medium",
         perspective: str = "third",
@@ -175,21 +171,27 @@ class StoryService:
             "dram": "dram tarzında, duygusal ve derin",
             "fantastik": "fantastik tarzında, büyülü ve olağanüstü"
         }
-        
+
         type_desc = story_type_descriptions.get(story_type, "yaratıcı")
-        
+
         # Advanced Settings Instructions
         pacing_instr = {
             "slow": "Hikayeyi yavaş ve detaylı bir tempoda anlat. Karakterlerin duygularına ve çevre tasvirlerine odaklan.",
             "medium": "Hikayeyi dengeli bir tempoda anlat.",
             "fast": "Hikayeyi hızlı ve aksiyon odaklı bir tempoda anlat. Olaylar hızlı gelişsin."
         }.get(pacing, "Dengeli bir tempo kullan.")
-        
+
         vocab_instr = {
             "simple": "Basit, anlaşılır ve kısa cümleler kullan. Çocukların anlayabileceği bir dil olsun.",
             "normal": "Akıcı ve doğal bir dil kullan.",
             "complex": "Zengin, edebi ve betimleyici bir dil kullan. Karmaşık cümle yapıları ve geniş bir kelime dağarcığı kullan."
         }.get(vocabulary, "Doğal bir dil kullan.")
+
+        perspective_instr = {
+            "first": "Hikâyeyi birinci tekil şahıs (ben) anlatımıyla yaz.",
+            "third": "Hikâyeyi üçüncü tekil şahıs anlatımıyla yaz.",
+            "omniscient": "Hikâyeyi tanrı bakışı (her şeyi bilen anlatıcı) ile yaz.",
+        }.get(perspective, "Üçüncü tekil şahıs anlatımı kullan.")
 
         # Pedagogical Themes (Turkish)
         pedagogical_prompts = {
@@ -202,7 +204,7 @@ class StoryService:
         ped_instr = pedagogical_prompts.get(pedagogical_theme, "") if language == "tr" else ""
 
         if language == "tr":
-            return f"""Aşağıdaki temaya göre {type_desc} bir hikâye yaz. 
+            return f"""Aşağıdaki temaya göre {type_desc} bir hikâye yaz.
 Hikâye 3-5 paragraf uzunluğunda olsun ve bir başlangıç, gelişme ve sonuç içersin.
 
 Hedef Kitle: {age_group} yaş arası çocuklar.
@@ -227,14 +229,14 @@ Hikâye:"""
                 "dram": "drama style, emotional and deep",
                 "fantastik": "fantasy style, magical and extraordinary"
             }.get(story_type, "creative")
-            
-            pacing_instr_en = {
+
+            {
                 "slow": "Tell the story at a slow and detailed pace. Focus on character emotions and environmental descriptions.",
                 "medium": "Tell the story at a balanced pace.",
                 "fast": "Tell the story at a fast and action-oriented pace. Events should unfold quickly."
             }.get(pacing, "Use a balanced pace.")
 
-            perspective_instr_en = {
+            {
                 "first": "Tell the story from a first-person perspective (I).",
                 "third": "Tell the story from a third-person perspective (He/She/They)."
             }.get(perspective, "Use third-person perspective.")
@@ -244,7 +246,7 @@ Hikâye:"""
                 "normal": "Use fluent and natural language.",
                 "complex": "Use rich, literary, and descriptive language. Use complex sentence structures and a wide vocabulary."
             }.get(vocabulary, "Use natural language.")
-            
+
             return f"""Write a {type_desc_en} story based on the following theme.
 The story should be 3-5 paragraphs long and include a beginning, development, and conclusion.
 
@@ -256,7 +258,7 @@ Settings:
 Theme: {theme}
 
 Story:"""
-    
+
     async def _generate_with_openai(self, prompt: str, temperature: float = 0.8) -> str:
         """OpenAI API ile hikâye üretir."""
         try:
@@ -273,7 +275,7 @@ Story:"""
         except Exception as e:
             print(f"OpenAI API hatası: {e}")
             return self._generate_fallback_story(prompt, "tr")
-    
+
     async def _generate_with_huggingface(self, prompt: str) -> str:
         """Hugging Face modeli ile hikâye üretir."""
         try:
@@ -288,7 +290,7 @@ Story:"""
         except Exception as e:
             print(f"Hugging Face model hatası: {e}")
             return self._generate_fallback_story(prompt, "tr")
-    
+
     def _generate_fallback_story(self, theme: str, language: str) -> str:
         """API'ler çalışmazsa basit bir hikâye döner."""
         if language == "tr":
@@ -303,7 +305,7 @@ Sonunda, tüm çabalarının karşılığını aldılar ve mutlu bir sonla hikâ
 In this story, our characters embarked on an adventurous journey. They faced many challenges along the way but never gave up.
 
 In the end, they reaped the rewards of all their efforts and their story ended with a happy ending. This story showed the power of courage and determination."""
-    
+
     async def generate_plot_twist(
         self,
         story_text: str,
@@ -311,11 +313,11 @@ In the end, they reaped the rewards of all their efforts and their story ended w
     ) -> str:
         """
         Hikâyeye plot twist ekler.
-        
+
         Args:
             story_text: Mevcut hikâye metni
             language: Dil
-        
+
         Returns:
             Plot twist metni
         """
@@ -333,7 +335,7 @@ Current Story:
 {story_text}
 
 Add the plot twist to the end of the story and rewrite it. The plot twist should be logical but unexpected."""
-        
+
         try:
             if self.openai_client:
                 response = self.openai_client.chat.completions.create(
@@ -348,13 +350,13 @@ Add the plot twist to the end of the story and rewrite it. The plot twist should
                 return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"Plot twist üretim hatası: {e}")
-        
+
         # Fallback
         if language == "tr":
             return f"{story_text}\n\nAma aslında, hiçbir şey göründüğü gibi değildi..."
         else:
             return f"{story_text}\n\nBut actually, nothing was as it seemed..."
-    
+
     async def generate_alternative_ending(
         self,
         story_text: str,
@@ -363,12 +365,12 @@ Add the plot twist to the end of the story and rewrite it. The plot twist should
     ) -> str:
         """
         Hikâye için alternatif son üretir.
-        
+
         Args:
             story_text: Mevcut hikâye metni
             ending_type: Son türü (surprise, happy, sad, open)
             language: Dil
-        
+
         Returns:
             Alternatif son metni
         """
@@ -378,7 +380,7 @@ Add the plot twist to the end of the story and rewrite it. The plot twist should
             "sad": "üzücü bir son",
             "open": "açık uçlu bir son",
         }
-        
+
         if language == "tr":
             ending_desc = ending_types.get(ending_type, "farklı bir son")
             prompt = f"""Aşağıdaki hikâye için {ending_desc} yaz. Hikâyenin sonunu değiştir ama başlangıç ve gelişme kısmını koru.
@@ -401,7 +403,7 @@ Current Story:
 {story_text}
 
 Please rewrite only the ending part (1-2 paragraphs) and add the alternative ending."""
-        
+
         try:
             if self.openai_client:
                 response = self.openai_client.chat.completions.create(
@@ -416,13 +418,13 @@ Please rewrite only the ending part (1-2 paragraphs) and add the alternative end
                 return response.choices[0].message.content.strip()
         except Exception as e:
             print(f"Alternatif son üretim hatası: {e}")
-        
+
         # Fallback
         if language == "tr":
             return f"{story_text}\n\nAma belki de hikâye farklı bir şekilde sonlanabilirdi..."
         else:
             return f"{story_text}\n\nBut perhaps the story could have ended differently..."
-    
+
     async def continue_story(
         self,
         story_text: str,
@@ -431,12 +433,12 @@ Please rewrite only the ending part (1-2 paragraphs) and add the alternative end
     ) -> str:
         """
         Mevcut hikâyeyi devam ettirir.
-        
+
         Args:
             story_text: Mevcut hikâye metni
             continuation_length: Devam uzunluğu (short, medium, long)
             language: Dil
-        
+
         Returns:
             Devam eden hikâye metni
         """
@@ -445,7 +447,7 @@ Please rewrite only the ending part (1-2 paragraphs) and add the alternative end
             "medium": "2-3 paragraf",
             "long": "3-5 paragraf",
         }
-        
+
         if language == "tr":
             length_desc = length_descriptions.get(continuation_length, "2-3 paragraf")
             prompt = f"""Aşağıdaki hikâyeyi doğal bir şekilde devam ettir. Hikâyenin tonunu ve stilini koru.
@@ -467,7 +469,7 @@ Current Story:
 {story_text}
 
 Please continue the story for {length_desc}. Progress it logically without breaking the flow."""
-        
+
         try:
             if self.openai_client:
                 response = self.openai_client.chat.completions.create(
@@ -483,13 +485,13 @@ Please continue the story for {length_desc}. Progress it logically without break
                 return f"{story_text}\n\n{continuation}"
         except Exception as e:
             print(f"Hikâye devam ettirme hatası: {e}")
-        
+
         # Fallback
         if language == "tr":
             return f"{story_text}\n\nVe böylece hikâye devam etti..."
         else:
             return f"{story_text}\n\nAnd so the story continued..."
-    
+
     async def generate_bedtime_story(
         self,
         theme: str = "rahatlatıcı bir gece masalı",
@@ -498,19 +500,19 @@ Please continue the story for {length_desc}. Progress it logically without break
     ) -> str:
         """
         Uyku öncesi için özel olarak tasarlanmış sakinleştirici hikaye üretir.
-        
+
         Bedtime Story Özellikleri:
         - Yavaş tempo ve rahatlatıcı ton
         - Basit, anlaşılır kelimeler
         - Pozitif ve güvenli sonlar
         - Stressiz, barışçıl içerik
         - Tahmin edilebilir yapı (çocukları rahatlatır)
-        
+
         Args:
             theme: Hikaye teması (varsayılan sakinleştirici)
             language: Dil
             age_group: Yaş grubu (kelime seçimini etkiler)
-        
+
         Returns:
             Uyku masalı metni
         """
@@ -518,7 +520,7 @@ Please continue the story for {length_desc}. Progress it logically without break
         creativity = 0.6  # Daha tahmin edilebilir, rahatlatıcı
         pacing = "slow"  # Yavaş, detaylı
         perspective = "third"  # Genelde 3. şahıs daha rahatlatıcı
-        
+
         # Yaş grubuna göre vocabulary
         vocab_map = {
             "3-6": "simple",
@@ -526,10 +528,10 @@ Please continue the story for {length_desc}. Progress it logically without break
             "11+": "normal"
         }
         vocabulary = vocab_map.get(age_group, "simple")
-        
+
         # Bedtime-specific prompt enhancement
         bedtime_theme = self._enhance_bedtime_theme(theme, language, age_group)
-        
+
         return await self.generate_story(
             theme=bedtime_theme,
             language=language,
@@ -539,7 +541,7 @@ Please continue the story for {length_desc}. Progress it logically without break
             perspective=perspective,
             vocabulary=vocabulary
         )
-    
+
     def _enhance_bedtime_theme(self, theme: str, language: str, age_group: str) -> str:
         """Bedtime hikaye temasını rahatlatıcı öğelerle zenginleştirir."""
         if language == "tr":
@@ -560,6 +562,6 @@ Please continue the story for {length_desc}. Progress it logically without break
                 "Use a soft tone that prepares for sleep."
             ]
             enhanced = f"{theme}\n\nSpecial Requirements:\n" + "\n".join([f"- {e}" for e in bedtime_elements])
-        
+
         return enhanced
 
